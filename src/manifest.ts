@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { defineManifest } from '@crxjs/vite-plugin';
 
 import packageData from '../package.json';
@@ -27,13 +26,19 @@ export default defineManifest({
     48: 'icon48.png',
     128: 'icon128.png',
   },
-  permissions: ['activeTab', 'storage'],
+  permissions: ['activeTab', 'storage', 'scripting'],
+  host_permissions: ['<all_urls>'],
+  background: {
+    service_worker: 'src/background/index.ts',
+    type: 'module',
+  },
   content_scripts: [
     {
       js: isDev
         ? ['src/content/index.dev.tsx']
         : ['src/content/index.prod.tsx'],
       matches: ['<all_urls>'],
+      run_at: 'document_idle',
     },
   ],
   web_accessible_resources: [
@@ -42,4 +47,5 @@ export default defineManifest({
       matches: ['<all_urls>'],
     },
   ],
+  options_page: 'src/options/index.html',
 });

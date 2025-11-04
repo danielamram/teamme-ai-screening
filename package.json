@@ -1,9 +1,9 @@
 {
-  "name": "chrome-ext-starter",
-  "displayName": "Chrome Extension Starter",
-  "description": "Get started with building your dream Chrome extension effortlessly! Our starter kit combines the power of cutting-edge technologies like Vite, TypeScript, React, CRX, Tailwind CSS, and DaisyUI, making extension development a breeze.",
+  "name": "teamme-ai-screening",
+  "displayName": "ATS AI Screening",
+  "description": "AI-powered candidate screening sidebar for ATS platforms",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --mode chrome",
@@ -17,6 +17,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "lucide-react": "^0.552.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "webextension-polyfill": "^0.12.0"
