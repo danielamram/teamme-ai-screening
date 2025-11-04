@@ -1,244 +1,78 @@
-import type { Candidate, CandidateProfile } from '@/types/candidate';
+import type { Candidate } from '@/types/candidate';
 
-const excellentCandidate: Candidate = {
-  id: 'cand-001',
-  name: 'Sarah Chen',
-  position: 'Senior Full-Stack Engineer',
-  appliedDate: '2025-11-01',
-  score: {
-    overall: 87,
-    skills: 92,
-    experience: 85,
-    education: 84,
+export const candidates: Candidate[] = [
+  {
+    id: '52483089',
+    name: 'Thomas Iqbal',
+    position: 'AI Engineer',
+    company: 'iStreamSolution',
+    location: 'Brooklyn, New York',
+    score: 35,
+    whyFit: [
+      '5+ years of experience designing, developing, and deploying ML/DL models in production with strong technical expertise in NLP pipelines, transformer models (BERT, GPT), LLM fine-tuning, computer vision, and cloud platforms (AWS Sagemaker, Azure ML, GCP). Successfully deployed multiple production systems including real-time chatbots and computer vision models using MLOps tools (Docker, Kubernetes, FastAPI, MLflow).',
+    ],
+    recommendation: {
+      level: 'pass',
+    },
+    recommendationReasoning:
+      'Thomas is a pass for the BDR role because his entire background is in technical AI/ML engineering rather than business development or sales. While he has deep technical expertise, he lacks B2B sales experience, digital outreach skills, CRM platform experience, and knowledge of the security & compliance domain required for this role. His skills are better suited for technical engineering positions.',
+    redFlags: [
+      'No B2B sales or business development experience - entire career focused on technical engineering roles. Location mismatch - based in Brooklyn, NY rather than required Southwest region (Colorado, Arizona, or Utah). No experience with security & compliance domain or GRC compliance. No demonstrated experience with CRM platforms (Salesforce, Hubspot, etc.) or Sales Engagement tools (Outreach, ZoomInfo). No evidence of client-facing communication, negotiation, or lead generation activities.',
+    ],
+    gapsToClarify: [
+      'Willingness to relocate to Colorado, Arizona, or Utah. Interest in transitioning from technical engineering to sales/business development role. Any informal sales or client engagement experience not captured on resume.',
+    ],
   },
-  strengths: [
-    {
-      id: 's1',
-      text: 'Expert in React, TypeScript, and Node.js with 6+ years of production experience',
+  {
+    id: '52482601',
+    name: 'Josh White',
+    position: 'Investor Relations Executive',
+    company: 'Prism Ventures LLC',
+    location: 'Austin, TX',
+    score: 84,
+    whyFit: [
+      'Extensive B2B sales and business development experience across multiple roles including Financial Advisor at Northwestern Mutual (100+ outbound calls daily, 5-7 client meetings/day), Account Executive at RiCOMA ($4M in sales), and various capital raising positions. Proven track record in client acquisition, relationship management, and stakeholder engagement with high-net-worth individuals and institutional investors. Experience with CRM platforms (Salesforce mentioned in skills), strong negotiation skills, and success in SaaS/technology sectors through capital raising work with multiple tech startups.',
+    ],
+    recommendation: {
+      level: 'strong-hire',
     },
-    {
-      id: 's2',
-      text: 'Led development of 3 major product launches at Fortune 500 companies',
-    },
-    {
-      id: 's3',
-      text: 'Strong system design skills with experience in microservices architecture',
-    },
-    {
-      id: 's4',
-      text: 'Active open-source contributor with 2.5K+ GitHub stars across projects',
-    },
-    {
-      id: 's5',
-      text: 'Excellent communication skills and proven mentorship track record',
-    },
-  ],
-  weaknesses: [
-    {
-      id: 'w1',
-      text: 'Limited experience with Python backend frameworks',
-    },
-    {
-      id: 'w2',
-      text: 'No direct experience with our specific CI/CD toolchain (Jenkins)',
-    },
-  ],
-  recommendation: {
-    level: 'strong-hire',
-    reasoning:
-      'Sarah is an exceptional candidate with outstanding technical skills, proven leadership experience, and a strong cultural fit. Her expertise in modern web technologies directly aligns with our stack, and her track record of delivering complex projects demonstrates reliability and excellence.',
-    confidenceScore: 94,
+    recommendationReasoning:
+      'Josh is a consider hire because he has strong B2B sales experience, proven client engagement skills, and familiarity with SaaS environments through his capital raising work. His high-volume outbound calling experience (100+/day at Northwestern Mutual) and consistent track record of relationship building align well with BDR requirements. However, he lacks specific experience in the security & compliance domain and is based in Austin, TX rather than the required Southwest region.',
+    redFlags: [
+      'Location mismatch - based in Austin, TX rather than required Colorado, Arizona, or Utah. No direct experience in security & compliance or GRC domain. Most recent roles focused on investor relations and capital raising rather than traditional BDR/SDR lead generation.',
+    ],
+    gapsToClarify: [
+      'Willingness to relocate to Colorado, Arizona, or Utah or work remotely from Austin. Specific hands-on experience with modern Sales Engagement platforms like Outreach, ZoomInfo, or Hubspot. Interest in transitioning from investor relations to BDR role focused on lead generation. Any exposure to security, compliance, or GRC topics through previous work with portfolio companies.',
+    ],
   },
-  metrics: {
-    skills: {
-      label: 'Technical Skills',
-      value: 92,
-      maxValue: 100,
-      description: 'Expert-level proficiency in required technologies',
+  {
+    id: '52482701',
+    name: 'Lisa Schaufelberger',
+    position: 'Outreach Specialist Supervisor, SDR',
+    company: 'Hover Networks',
+    location: 'Spring, TX',
+    score: 73,
+    whyFit: [
+      'Over 20 years of B2B sales experience with extensive BDR/SDR background including 6+ years as Outreach Specialist Supervisor at Hover Networks (SaaS cloud phone services) where she led inside sales operations, executed cold calling, warm lead generation, appointment setting, and supervised a team of 2-4 SDRs. Proven expertise with multiple CRM platforms including HubSpot, Salesforce, Encompass, and Pipedrive (10+ years experience). Strong communication and negotiation skills demonstrated through consistent high-volume outbound calling, digital engagement via LinkedIn, and award-winning performance (MVP award, top lead producer). Experience spans both B2B SaaS startups and enterprise sales environments with demonstrated ability to articulate value propositions and generate qualified leads.',
+    ],
+    recommendation: {
+      level: 'consider',
     },
-    experience: {
-      label: 'Experience Level',
-      value: 85,
-      maxValue: 100,
-      description: '6+ years in senior engineering roles',
-    },
-    education: {
-      label: 'Education',
-      value: 84,
-      maxValue: 100,
-      description: 'MS Computer Science from top-tier university',
-    },
+    recommendationReasoning:
+      'Lisa is a strong hire because she has direct, extensive BDR/SDR experience in B2B SaaS environments with proven success in lead generation, cold calling, appointment setting, and CRM management. Her 6+ years at Hover Networks demonstrates deep expertise in the exact role requirements, and her mastery of HubSpot, Salesforce, and Sales Engagement platforms (LinkedIn, ZoomInfo) aligns perfectly with the position. Her supervisory experience shows leadership capability and process orientation. The main consideration is her location in Spring, TX rather than the Southwest region, though her proven remote work experience mitigates this concern.',
+    redFlags: [
+      'Location in Spring, TX rather than required Colorado, Arizona, or Utah (though she has extensive remote work experience). No direct experience in security & compliance or GRC domain.',
+    ],
+    gapsToClarify: [
+      'Willingness to relocate to Colorado, Arizona, or Utah or ability to work remotely from Texas. Any familiarity with security, compliance, or GRC concepts through previous clients or self-study. Current employment status and availability (resume shows current role starting March 2025 which may be an error given current date is November 2025).',
+    ],
   },
-};
-
-const moderateCandidate: Candidate = {
-  id: 'cand-002',
-  name: 'Marcus Johnson',
-  position: 'Mid-Level Software Engineer',
-  appliedDate: '2025-10-28',
-  score: {
-    overall: 66,
-    skills: 68,
-    experience: 62,
-    education: 70,
-  },
-  strengths: [
-    {
-      id: 's1',
-      text: 'Solid foundation in JavaScript and React with 3 years experience',
-    },
-    {
-      id: 's2',
-      text: 'Quick learner with demonstrated ability to pick up new technologies',
-    },
-    {
-      id: 's3',
-      text: 'Good problem-solving skills shown in technical assessment',
-    },
-    {
-      id: 's4',
-      text: 'Strong eagerness to grow and positive attitude',
-    },
-  ],
-  weaknesses: [
-    {
-      id: 'w1',
-      text: 'Limited experience with TypeScript and testing frameworks',
-    },
-    {
-      id: 'w2',
-      text: 'No experience leading projects or mentoring junior developers',
-    },
-    {
-      id: 'w3',
-      text: 'Resume shows job-hopping with 3 positions in 3 years',
-    },
-    {
-      id: 'w4',
-      text: 'Lacks experience with cloud infrastructure (AWS/GCP/Azure)',
-    },
-  ],
-  recommendation: {
-    level: 'consider',
-    reasoning:
-      'Marcus shows promise with a solid technical foundation and enthusiasm for learning. However, he lacks depth in several key areas we prioritize. Consider for a more junior role or if willing to invest in training. Cultural fit assessment recommended before making final decision.',
-    confidenceScore: 68,
-  },
-  metrics: {
-    skills: {
-      label: 'Technical Skills',
-      value: 68,
-      maxValue: 100,
-      description: 'Adequate skills but gaps in key areas',
-    },
-    experience: {
-      label: 'Experience Level',
-      value: 62,
-      maxValue: 100,
-      description: '3 years with mixed responsibilities',
-    },
-    education: {
-      label: 'Education',
-      value: 70,
-      maxValue: 100,
-      description: 'BS Computer Science from accredited university',
-    },
-  },
-};
-
-const poorCandidate: Candidate = {
-  id: 'cand-003',
-  name: 'David Martinez',
-  position: 'Software Engineer',
-  appliedDate: '2025-10-25',
-  score: {
-    overall: 43,
-    skills: 38,
-    experience: 45,
-    education: 48,
-  },
-  strengths: [
-    {
-      id: 's1',
-      text: 'Basic understanding of web development fundamentals',
-    },
-    {
-      id: 's2',
-      text: 'Completed bootcamp and shows motivation to enter tech',
-    },
-  ],
-  weaknesses: [
-    {
-      id: 'w1',
-      text: 'Very limited production experience (6 months total)',
-    },
-    {
-      id: 'w2',
-      text: 'No experience with React, TypeScript, or modern frameworks',
-    },
-    {
-      id: 'w3',
-      text: 'Struggled significantly with technical assessment (32% score)',
-    },
-    {
-      id: 'w4',
-      text: 'Resume shows primarily HTML/CSS work with minimal JavaScript',
-    },
-    {
-      id: 'w5',
-      text: 'No understanding of version control workflows or CI/CD',
-    },
-    {
-      id: 'w6',
-      text: 'Skills gap too large for the senior-level position requirements',
-    },
-  ],
-  recommendation: {
-    level: 'pass',
-    reasoning:
-      'David is in the early stages of his career and lacks the experience and technical depth required for this role. The skills gap is substantial and would require extensive training. Recommend passing and suggesting he gain more experience before reapplying, or consider for an entry-level/internship role if available.',
-    confidenceScore: 89,
-  },
-  metrics: {
-    skills: {
-      label: 'Technical Skills',
-      value: 38,
-      maxValue: 100,
-      description: 'Significant gaps in required technologies',
-    },
-    experience: {
-      label: 'Experience Level',
-      value: 45,
-      maxValue: 100,
-      description: 'Less than 1 year relevant experience',
-    },
-    education: {
-      label: 'Education',
-      value: 48,
-      maxValue: 100,
-      description: 'Coding bootcamp graduate',
-    },
-  },
-};
-
-export const mockCandidates: Candidate[] = [
-  excellentCandidate,
-  moderateCandidate,
-  poorCandidate,
 ];
 
-export const mockCandidateProfiles: CandidateProfile[] = mockCandidates.map(
-  (candidate) => ({
-    candidate,
-    analysisDate: new Date().toISOString(),
-    version: '1.0.0',
-  })
-);
-
 export function getCandidateById(id: string): Candidate | undefined {
-  return mockCandidates.find((candidate) => candidate.id === id);
+  return candidates.find((candidate) => candidate.id === id);
 }
 
 export function getDefaultCandidate(): Candidate {
-  return excellentCandidate;
+  return candidates[0];
 }

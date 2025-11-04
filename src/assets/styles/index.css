@@ -139,16 +139,16 @@
 }
 
 #my-ext ::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: #f1f2f4;
 }
 
 #my-ext ::-webkit-scrollbar-thumb {
   border-radius: 4px;
-  background: #475569;
+  background: #d4d6da;
 }
 
 #my-ext ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: #666b73;
 }
 
 /* Ensure animations work properly */
@@ -159,12 +159,7 @@
 /* Loading shimmer effect */
 .shimmer {
   animation: shimmer 2s infinite linear;
-  background: linear-gradient(
-    to right,
-    rgba(51, 65, 85, 0.8) 0%,
-    rgba(71, 85, 105, 0.9) 50%,
-    rgba(51, 65, 85, 0.8) 100%
-  );
+  background: linear-gradient(to right, #f1f2f4 0%, #e4e6e8 50%, #f1f2f4 100%);
   background-size: 2000px 100%;
 }
 

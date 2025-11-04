@@ -1,5 +1,6 @@
 import { JSX } from 'react';
 import type { Candidate } from '@/types/candidate';
+import type React from 'react';
 import { X } from 'lucide-react';
 
 interface SidebarHeaderProps {
@@ -12,23 +13,57 @@ export default function SidebarHeader({
   onClose,
 }: SidebarHeaderProps): JSX.Element {
   return (
-    <div className='flex items-center justify-between border-b border-slate-700 p-4'>
-      <div className='flex-1'>
-        <h2 className='mb-1 text-sm font-medium text-slate-400'>
-          AI Screening Analysis
-        </h2>
-        <h3 className='text-lg font-semibold text-white'>{candidate.name}</h3>
-        <p className='text-sm text-slate-400'>{candidate.position}</p>
-      </div>
+    // drop shadow
+    <div
+      className='border-b px-3 pt-6'
+      style={{
+        borderColor: '#E4E6E8',
+        boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      <div className='mb-3 flex items-start justify-between'>
+        <div className='flex gap-3'>
+          {/* Profile image placeholder */}
+          <div
+            className='flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full font-bold'
+            style={{ backgroundColor: '#E4E6E8', color: '#6B6D75' }}
+          >
+            {candidate.name.charAt(0)}
+          </div>
 
-      <button
-        type='button'
-        onClick={onClose}
-        className='btn btn-ghost btn-sm btn-circle'
-        aria-label='Close sidebar'
-      >
-        <X size={20} className='text-slate-300' />
-      </button>
+          <div className='flex-1'>
+            <h2
+              className='mb-0.5 text-lg font-bold leading-tight'
+              style={{ color: '#292A2E' }}
+            >
+              {candidate.name}
+            </h2>
+            <p
+              className='mb-1 text-xs leading-relaxed'
+              style={{ color: '#6B6D75' }}
+            >
+              {candidate.position} @ {candidate.company}
+            </p>
+            <p className='text-xs' style={{ color: '#9F9F9F' }}>
+              {candidate.location}
+            </p>
+          </div>
+        </div>
+
+        <button
+          type='button'
+          onClick={onClose}
+          className='btn btn-ghost btn-sm btn-circle flex-shrink-0'
+          style={
+            {
+              '--btn-color': '#1F2024',
+            } as React.CSSProperties
+          }
+          aria-label='Close sidebar'
+        >
+          <X size={18} style={{ color: '#9F9F9F' }} />
+        </button>
+      </div>
     </div>
   );
 }

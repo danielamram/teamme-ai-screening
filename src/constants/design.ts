@@ -3,9 +3,26 @@
  */
 
 export const COLORS = {
-  // Primary brand colors
+  // Base palette
+  white: '#FFFFFF', // Backgrounds, modal surfaces
+  gray: {
+    50: '#F7F8FA', // Page background
+    100: '#F1F2F4', // Cards / soft panels
+    200: '#E4E6E8', // Borders / strokes
+    300: '#D4D6DA', // Inputs / secondary stroke
+    600: '#666B73', // Secondary text, icons
+    900: '#1F2024', // Titles, primary text
+  },
+  black: '#000000', // Deepest shadow (rare)
+
+  // Additional palette
+  bgPage: '#F5F5F5', // Page background alternative
+  bgBox: '#EDEDED', // Box background
+  textBody: '#616161', // Body text
+  iconColor: '#9F9F9F', // Icon color
+
+  // Primary brand colors (keeping for accent purposes)
   primary: {
-    navy: '#1e293b', // Deep navy background
     indigo: '#4f46e5', // Indigo accent
     indigoLight: '#6366f1',
     indigoDark: '#4338ca',
@@ -21,28 +38,32 @@ export const COLORS = {
   },
 
   // Semantic colors
-  success: '#10b981',
-  warning: '#f59e0b',
-  error: '#ef4444',
+  success: '#4CAF7B',
+  warning: '#F29B4B',
+  error: '#E2554F',
   info: '#3b82f6',
 
   // UI colors
   background: {
-    glass: 'rgba(30, 41, 59, 0.95)', // Glassmorphism background
-    card: 'rgba(51, 65, 85, 0.8)',
-    cardHover: 'rgba(51, 65, 85, 0.9)',
+    primary: '#FFFFFF', // Main background / modal surfaces
+    page: '#F5F5F5', // Page background
+    card: '#FFFFFF', // Card background
+    cardAlt: '#F1F2F4', // Alternative card background
+    box: '#EDEDED', // Box background
   },
 
   text: {
-    primary: '#f8fafc',
-    secondary: '#cbd5e1',
-    tertiary: '#94a3b8',
-    muted: '#64748b',
+    primary: '#1F2024', // Titles, primary text
+    secondary: '#666B73', // Secondary text, icons
+    body: '#616161', // Body text
+    muted: '#9F9F9F', // Muted text / icons
   },
 
   border: {
-    default: 'rgba(148, 163, 184, 0.2)',
-    focus: 'rgba(99, 102, 241, 0.5)',
+    default: '#E4E6E8', // Borders / strokes
+    light: '#F1F2F4', // Light borders
+    input: '#D4D6DA', // Inputs / secondary stroke
+    focus: 'rgba(79, 70, 229, 0.5)',
   },
 } as const;
 
@@ -139,7 +160,7 @@ export const ANIMATIONS = {
 
 export const LAYOUT = {
   sidebar: {
-    width: '400px',
+    width: '260px',
     maxWidth: '90vw',
     zIndex: 2147483647, // Maximum z-index
   },
@@ -196,13 +217,13 @@ export const TYPOGRAPHY = {
 } as const;
 
 export const SHADOWS = {
-  sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-  md: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-  lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-  xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-  '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-  inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
-  glow: '0 0 20px rgba(99, 102, 241, 0.3)',
+  sm: '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+  md: '0 4px 6px -1px rgba(0, 0, 0, 0.06)',
+  lg: '0 10px 15px -3px rgba(0, 0, 0, 0.08)',
+  xl: '0 20px 25px -5px rgba(0, 0, 0, 0.08)',
+  '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+  inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.04)',
+  glow: '0 0 20px rgba(79, 70, 229, 0.2)',
 } as const;
 
 /**

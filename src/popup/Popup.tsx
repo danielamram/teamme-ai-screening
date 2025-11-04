@@ -42,37 +42,47 @@ export default function Popup(): JSX.Element {
   };
 
   return (
-    <div id='my-ext' className='w-[320px] bg-slate-900 p-4' data-theme='dark'>
+    <div id='my-ext' className='w-[320px] bg-white p-4' data-theme='light'>
       <div className='space-y-4'>
         {/* Header */}
-        <div className='flex items-center gap-3 border-b border-slate-700 pb-4'>
+        <div
+          className='flex items-center gap-3 border-b pb-4'
+          style={{ borderColor: '#E4E6E8' }}
+        >
           <div className='rounded-lg bg-indigo-600 p-2'>
             <Sparkles size={24} className='text-white' />
           </div>
           <div>
-            <h1 className='text-lg font-bold text-white'>ATS Screening AI</h1>
-            <p className='text-xs text-slate-400'>Candidate Analysis Tool</p>
+            <h1 className='text-lg font-bold' style={{ color: '#1F2024' }}>
+              ATS Screening AI
+            </h1>
+            <p className='text-xs' style={{ color: '#666B73' }}>
+              Candidate Analysis Tool
+            </p>
           </div>
         </div>
 
         {/* Status card */}
-        <div className='rounded-lg border border-slate-700 bg-slate-800/50 p-4'>
+        <div
+          className='rounded-lg border p-4'
+          style={{ borderColor: '#E4E6E8', backgroundColor: '#F1F2F4' }}
+        >
           <div className='mb-2 flex items-center justify-between'>
-            <span className='text-sm font-medium text-slate-300'>
+            <span className='text-sm font-medium' style={{ color: '#1F2024' }}>
               Sidebar Status
             </span>
             <div
               className={`rounded-full px-2 py-1 text-xs font-semibold ${
                 sidebarState.isOpen
-                  ? 'bg-green-900/30 text-green-400'
-                  : 'bg-slate-700 text-slate-400'
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-gray-100 text-gray-600'
               }`}
             >
               {sidebarState.isOpen ? 'Open' : 'Closed'}
             </div>
           </div>
           {sidebarState.lastOpenedAt && (
-            <p className='text-xs text-slate-500'>
+            <p className='text-xs' style={{ color: '#616161' }}>
               Last opened:{' '}
               {new Date(sidebarState.lastOpenedAt).toLocaleString()}
             </p>
@@ -97,8 +107,14 @@ export default function Popup(): JSX.Element {
         </button>
 
         {/* Quick actions */}
-        <div className='space-y-2 border-t border-slate-700 pt-4'>
-          <p className='text-xs font-semibold uppercase tracking-wide text-slate-400'>
+        <div
+          className='space-y-2 border-t pt-4'
+          style={{ borderColor: '#E4E6E8' }}
+        >
+          <p
+            className='text-xs font-semibold uppercase tracking-wide'
+            style={{ color: '#666B73' }}
+          >
             Quick Actions
           </p>
           <button
@@ -118,8 +134,11 @@ export default function Popup(): JSX.Element {
         </div>
 
         {/* Footer */}
-        <div className='border-t border-slate-700 pt-4 text-center'>
-          <p className='text-xs text-slate-500'>
+        <div
+          className='border-t pt-4 text-center'
+          style={{ borderColor: '#E4E6E8' }}
+        >
+          <p className='text-xs' style={{ color: '#666B73' }}>
             AI-powered candidate screening for ATS platforms
           </p>
         </div>

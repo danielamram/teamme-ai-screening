@@ -59,6 +59,11 @@ export const ATS_PLATFORMS: ATSPlatform[] = [
     domains: ['recruiterbox.com'],
     patterns: [/recruiterbox\.com/i],
   },
+  {
+    name: 'Comeet',
+    domains: ['comeet.co'],
+    patterns: [/comeet\.co/i],
+  },
 ];
 
 /**
@@ -98,4 +103,32 @@ export function getATSMatchPatterns(): string[] {
   return ATS_PLATFORMS.flatMap((platform) =>
     platform.domains.map((domain) => `*://*.${domain}/*`)
   );
+}
+
+/**
+ * Extract candidate ID from Comeet URL
+ * Format: https://app.comeet.co/app/req/358701/can/51042831?reqStatus=1
+ */
+export function extractComeetCandidateId(url: string): string | null {
+  const match = url.match(/\/can\/(\d+)/);
+  return match ? match[1] : null;
+}
+
+/**
+ * Extract candidate ID from the current URL based on the ATS platform
+ */
+export function extractCandidateIdFromUrl(url: string): string | null {
+  const platform = detectATSPlatform(url);
+
+  if (!platform) {
+    return null;
+  }
+
+  switch (platform.name) {
+    case 'Comeet':
+      return extractComeetCandidateId(url);
+    // Add more ATS platforms as needed
+    default:
+      return null;
+  }
 }
