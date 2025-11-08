@@ -7,6 +7,7 @@ import {
   getDefaultCandidate,
 } from '@/data/mockCandidates';
 import { extractCandidateIdFromUrl } from '@/utils/atsDetector';
+import { getCandidateFromAPI } from '@/utils/candidateApi';
 import { sendMessage } from '@/utils/messaging';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -57,23 +58,48 @@ export function useCandidateData() {
         const urlCandidateId = extractCandidateIdFromUrl(currentUrl);
 
         if (urlCandidateId) {
-          const candidate = getCandidateById(urlCandidateId);
-          if (candidate) {
+          console.log(`Extracted candidate ID from URL: ${urlCandidateId}`);
+
+          try {
+            // Try to fetch from API first
+            const candidate = await getCandidateFromAPI(urlCandidateId);
             console.log(
-              `Found candidate from URL: ${candidate.name} (${urlCandidateId})`
+              `Fetched candidate from API: ${candidate.name} (${urlCandidateId})`
             );
             setSelectedCandidate(candidate);
             setCandidateFound(true);
+
             // Update storage with the URL candidate
             await sendMessage({
               type: 'SET_SELECTED_CANDIDATE',
               payload: { candidateId: urlCandidateId },
             });
             return;
+          } catch (apiError) {
+            console.warn(
+              `Failed to fetch candidate ${urlCandidateId} from API, falling back to mock data:`,
+              apiError
+            );
+
+            // Fall back to mock data
+            const candidate = getCandidateById(urlCandidateId);
+            if (candidate) {
+              console.log(
+                `Found candidate in mock data: ${candidate.name} (${urlCandidateId})`
+              );
+              setSelectedCandidate(candidate);
+              setCandidateFound(true);
+              await sendMessage({
+                type: 'SET_SELECTED_CANDIDATE',
+                payload: { candidateId: urlCandidateId },
+              });
+              return;
+            }
+
+            console.warn(
+              `Candidate ID ${urlCandidateId} not found in API or mock data`
+            );
           }
-          console.warn(
-            `Candidate ID ${urlCandidateId} from URL not found in mock data`
-          );
         }
 
         // No candidate found in URL
@@ -85,10 +111,20 @@ export function useCandidateData() {
         });
 
         if (response.success && response.data?.candidateId) {
-          const candidate = getCandidateById(response.data.candidateId);
-          if (candidate) {
+          try {
+            // Try API first
+            const candidate = await getCandidateFromAPI(
+              response.data.candidateId
+            );
             setSelectedCandidate(candidate);
             setCandidateFound(true);
+          } catch (apiError) {
+            // Fall back to mock data
+            const candidate = getCandidateById(response.data.candidateId);
+            if (candidate) {
+              setSelectedCandidate(candidate);
+              setCandidateFound(true);
+            }
           }
         }
       } catch (error) {
@@ -104,22 +140,42 @@ export function useCandidateData() {
   }, [currentUrl]);
 
   const selectCandidate = useCallback(async (candidateId: string) => {
-    const candidate = getCandidateById(candidateId);
-    if (!candidate) {
-      console.error(`Candidate not found: ${candidateId}`);
-      return;
-    }
-
     setLoading(true);
-    setSelectedCandidate(candidate);
 
     try {
+      // Try to fetch from API first
+      const candidate = await getCandidateFromAPI(candidateId);
+      setSelectedCandidate(candidate);
+
       await sendMessage({
         type: 'SET_SELECTED_CANDIDATE',
         payload: { candidateId },
       });
-    } catch (error) {
-      console.error('Error selecting candidate:', error);
+    } catch (apiError) {
+      console.warn(
+        `Failed to fetch candidate ${candidateId} from API, falling back to mock data:`,
+        apiError
+      );
+
+      // Fall back to mock data
+      const candidate = getCandidateById(candidateId);
+      if (!candidate) {
+        console.error(
+          `Candidate not found in API or mock data: ${candidateId}`
+        );
+        return;
+      }
+
+      setSelectedCandidate(candidate);
+
+      try {
+        await sendMessage({
+          type: 'SET_SELECTED_CANDIDATE',
+          payload: { candidateId },
+        });
+      } catch (error) {
+        console.error('Error selecting candidate:', error);
+      }
     } finally {
       setLoading(false);
     }

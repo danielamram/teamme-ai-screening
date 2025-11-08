@@ -107,11 +107,34 @@ export function getATSMatchPatterns(): string[] {
 
 /**
  * Extract candidate ID from Comeet URL
- * Format: https://app.comeet.co/app/req/358701/can/51042831?reqStatus=1
+ * Formats:
+ * - https://app.comeet.co/app/req/358701/can/51042831?reqStatus=1 (numeric)
+ * - https://app.comeet.co/app/?goto_url=/can/52483175 (numeric)
+ * - Any URL with person_uid parameter like 64.D0237
+ * Note: Returns the person_uid format (e.g., 64.D0237) when available,
+ * otherwise returns numeric ID as-is
  */
 export function extractComeetCandidateId(url: string): string | null {
-  const match = url.match(/\/can\/(\d+)/);
-  return match ? match[1] : null;
+  // First, try to extract person_uid from URL parameters
+  const urlObj = new URL(url);
+  const personUid = urlObj.searchParams.get('person_uid');
+  if (personUid) {
+    return personUid;
+  }
+
+  // Try to extract from goto_url parameter
+  const gotoUrl = urlObj.searchParams.get('goto_url');
+  if (gotoUrl) {
+    const match = gotoUrl.match(/\/can\/([A-Za-z0-9.]+)/);
+    if (match) {
+      return match[1];
+    }
+  }
+
+  // Fall back to extracting from the main URL path
+  // This pattern matches both numeric IDs and alphanumeric IDs like 64.D0237
+  const pathMatch = url.match(/\/can\/([A-Za-z0-9.]+)/);
+  return pathMatch ? pathMatch[1] : null;
 }
 
 /**
