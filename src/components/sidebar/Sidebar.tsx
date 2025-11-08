@@ -5,6 +5,7 @@ import { useShimmer } from '@/hooks/useAnimations';
 import { useEscapeKey } from '@/hooks/useKeyboardShortcut';
 import { useSidebarState } from '@/hooks/useSidebarState';
 
+import SpeedGauge from '../SpeedGauge';
 import CollapseToggle from './CollapseToggle';
 import Recommendation from './Recommendation';
 import RecommendationSection from './RecommendationSection';
@@ -82,11 +83,10 @@ export default function Sidebar({
                     score={selectedCandidate.score}
                     maxScore={100}
                   />
-
+                  <SpeedGauge speed={90} />
                   <Recommendation
                     recommendation={selectedCandidate.recommendationReasoning}
                   />
-
                   {/* Why Fit Section */}
                   <WhyFitSection
                     title='Summary'
