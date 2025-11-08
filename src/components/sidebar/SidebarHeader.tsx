@@ -33,13 +33,14 @@ export default function SidebarHeader({
 
           <div className='flex-1'>
             <h2
-              className='mb-0.5 text-lg font-bold leading-tight'
+              className='mb-0.5 text-sm font-bold leading-tight'
               style={{ color: '#292A2E' }}
             >
               {candidate.name}
             </h2>
+            {/*  maximum 2 lines and ellipsis */}
             <p
-              className='mb-1 text-xs leading-relaxed'
+              className='mb-1 line-clamp-2 text-xs leading-relaxed'
               style={{ color: '#6B6D75' }}
             >
               {candidate.position} @ {candidate.company}

@@ -8,7 +8,6 @@ import { useSidebarState } from '@/hooks/useSidebarState';
 import SpeedGauge from '../SpeedGauge';
 import CollapseToggle from './CollapseToggle';
 import Recommendation from './Recommendation';
-import RecommendationSection from './RecommendationSection';
 import SidebarHeader from './SidebarHeader';
 import WhyFitSection from './WhyFitSection';
 
@@ -62,7 +61,7 @@ export default function Sidebar({
 
             {/* Scrollable content */}
             <div
-              className='flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden'
+              className='flex-1 overflow-y-auto py-6 [&::-webkit-scrollbar]:hidden'
               style={{
                 scrollbarWidth: 'none',
               }}
@@ -78,12 +77,7 @@ export default function Sidebar({
               ) : (
                 <>
                   {/* Recommendation */}
-                  <RecommendationSection
-                    recommendation={selectedCandidate.recommendation}
-                    score={selectedCandidate.score}
-                    maxScore={100}
-                  />
-                  <SpeedGauge speed={90} />
+                  <SpeedGauge speed={selectedCandidate.score} />
                   <Recommendation
                     recommendation={selectedCandidate.recommendationReasoning}
                   />

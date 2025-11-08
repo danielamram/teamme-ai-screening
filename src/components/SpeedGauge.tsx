@@ -1,10 +1,38 @@
 import { useEffect, useState } from 'react';
+import { ThumbsDown, ThumbsUp, TriangleAlert } from 'lucide-react';
+
+import {
+  formatRecommendationLevel,
+  getRecommendationColor,
+} from '@/constants/design';
 
 interface SpeedGaugeProps {
   speed: number;
 }
 
 const MAX_SPEED = 100;
+
+const getIcon = (level: 'strong-hire' | 'consider' | 'pass') => {
+  const color = getRecommendationColor(level);
+  switch (level) {
+    case 'strong-hire':
+      return <ThumbsUp size={20} style={{ color }} />;
+    case 'consider':
+      return <TriangleAlert size={20} style={{ color }} />;
+    case 'pass':
+      return <ThumbsDown size={20} style={{ color }} />;
+    default:
+      return <ThumbsUp size={20} style={{ color }} />;
+  }
+};
+
+const getRecommendationLevel = (
+  speed: number
+): 'strong-hire' | 'consider' | 'pass' => {
+  if (speed >= 80) return 'strong-hire';
+  if (speed >= 60) return 'consider';
+  return 'pass';
+};
 
 export default function SpeedGauge({ speed }: SpeedGaugeProps) {
   const [currentSpeed, setCurrentSpeed] = useState(0);
@@ -18,10 +46,13 @@ export default function SpeedGauge({ speed }: SpeedGaugeProps) {
         }
         return prev + increment;
       });
-    }, 30);
+    }, 2);
 
     return () => clearInterval(timer);
   }, [speed, currentSpeed]);
+
+  const level = getRecommendationLevel(speed);
+  const color = getRecommendationColor(level);
 
   // Clamp speed to 1-100 range
   const clampedSpeed = Math.min(Math.max(currentSpeed, 1), MAX_SPEED);
@@ -97,6 +128,15 @@ export default function SpeedGauge({ speed }: SpeedGaugeProps) {
             }}
           />
         </svg>
+
+        <div className='absolute bottom-6 left-0 right-0 flex flex-col items-center justify-center'>
+          <div className='flex flex-col items-center gap-2 rounded-full px-3 py-1.5'>
+            {getIcon(level)}
+            <span className='text-sm font-semibold' style={{ color }}>
+              {formatRecommendationLevel(level)}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );
