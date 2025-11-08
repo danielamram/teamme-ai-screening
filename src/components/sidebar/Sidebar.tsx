@@ -12,15 +12,13 @@ import SidebarHeader from './SidebarHeader';
 import WhyFitSection from './WhyFitSection';
 
 interface SidebarProps {
-  selectedCandidate: Candidate;
+  selectedCandidate: Candidate | null;
   loading: boolean;
-  candidateFound: boolean;
 }
 
 export default function Sidebar({
   selectedCandidate,
   loading,
-  candidateFound,
 }: SidebarProps): JSX.Element {
   const { isOpen, closeSidebar, openSidebar } = useSidebarState();
   const showShimmer = useShimmer(loading);
@@ -28,9 +26,11 @@ export default function Sidebar({
   // Close sidebar on ESC key
   useEscapeKey(closeSidebar, isOpen);
 
+  const shouldShow = selectedCandidate !== null || loading;
+
   return (
     <>
-      {candidateFound && (
+      {shouldShow && (
         <CollapseToggle
           isOpen={isOpen}
           onToggle={isOpen ? closeSidebar : openSidebar}
@@ -38,7 +38,7 @@ export default function Sidebar({
       )}
 
       {/* Sidebar */}
-      {candidateFound && (
+      {shouldShow && (
         <div
           className='fixed left-0 top-0 h-full w-[260px] max-w-[90vw]'
           style={{
@@ -66,8 +66,8 @@ export default function Sidebar({
                 scrollbarWidth: 'none',
               }}
             >
-              {showShimmer ? (
-                // Loading shimmer effect
+              {showShimmer || !selectedCandidate ? (
+                // Loading shimmer effect or placeholder
                 <div className='space-y-3 p-3'>
                   <div className='h-40 animate-pulse rounded-lg bg-gray-200' />
                   <div className='h-28 animate-pulse rounded-lg bg-gray-200' />

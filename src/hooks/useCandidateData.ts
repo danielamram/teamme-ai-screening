@@ -1,23 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Candidate } from '@/types/candidate';
 
-import {
-  candidates,
-  getCandidateById,
-  getDefaultCandidate,
-} from '@/data/mockCandidates';
+import { candidates, getCandidateById } from '@/data/mockCandidates';
 import { extractCandidateIdFromUrl } from '@/utils/atsDetector';
 import { getCandidateFromAPI } from '@/utils/candidateApi';
 import { sendMessage } from '@/utils/messaging';
 
 // eslint-disable-next-line import/prefer-default-export
 export function useCandidateData() {
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate>(
-    getDefaultCandidate()
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
+    null
   );
   const [loading, setLoading] = useState(false);
   const [currentUrl, setCurrentUrl] = useState(window.location.href);
-  const [candidateFound, setCandidateFound] = useState(false);
   const loadingRef = useRef(false);
 
   // Poll for URL changes (handles all SPA navigation patterns)
@@ -57,53 +52,51 @@ export function useCandidateData() {
         // First, try to extract candidate ID from URL
         const urlCandidateId = extractCandidateIdFromUrl(currentUrl);
 
-        if (urlCandidateId) {
-          console.log(`Extracted candidate ID from URL: ${urlCandidateId}`);
+        if (!urlCandidateId) {
+          setSelectedCandidate(null);
+          return;
+        }
 
-          try {
-            // Try to fetch from API first
-            const candidate = await getCandidateFromAPI(urlCandidateId);
+        console.log(`Extracted candidate ID from URL: ${urlCandidateId}`);
+
+        try {
+          // Try to fetch from API first
+          const candidate = await getCandidateFromAPI(urlCandidateId);
+          console.log(
+            `Fetched candidate from API: ${candidate.name} (${urlCandidateId})`
+          );
+          setSelectedCandidate(candidate);
+
+          // Update storage with the URL candidate
+          await sendMessage({
+            type: 'SET_SELECTED_CANDIDATE',
+            payload: { candidateId: urlCandidateId },
+          });
+          return;
+        } catch (apiError) {
+          console.warn(
+            `Failed to fetch candidate ${urlCandidateId} from API, falling back to mock data:`,
+            apiError
+          );
+
+          // Fall back to mock data
+          const candidate = getCandidateById(urlCandidateId);
+          if (candidate) {
             console.log(
-              `Fetched candidate from API: ${candidate.name} (${urlCandidateId})`
+              `Found candidate in mock data: ${candidate.name} (${urlCandidateId})`
             );
             setSelectedCandidate(candidate);
-            setCandidateFound(true);
-
-            // Update storage with the URL candidate
             await sendMessage({
               type: 'SET_SELECTED_CANDIDATE',
               payload: { candidateId: urlCandidateId },
             });
             return;
-          } catch (apiError) {
-            console.warn(
-              `Failed to fetch candidate ${urlCandidateId} from API, falling back to mock data:`,
-              apiError
-            );
-
-            // Fall back to mock data
-            const candidate = getCandidateById(urlCandidateId);
-            if (candidate) {
-              console.log(
-                `Found candidate in mock data: ${candidate.name} (${urlCandidateId})`
-              );
-              setSelectedCandidate(candidate);
-              setCandidateFound(true);
-              await sendMessage({
-                type: 'SET_SELECTED_CANDIDATE',
-                payload: { candidateId: urlCandidateId },
-              });
-              return;
-            }
-
-            console.warn(
-              `Candidate ID ${urlCandidateId} not found in API or mock data`
-            );
           }
-        }
 
-        // No candidate found in URL
-        setCandidateFound(false);
+          console.warn(
+            `Candidate ID ${urlCandidateId} not found in API or mock data`
+          );
+        }
 
         // Fall back to stored candidate ID
         const response = await sendMessage<{ candidateId: string }>({
@@ -117,19 +110,16 @@ export function useCandidateData() {
               response.data.candidateId
             );
             setSelectedCandidate(candidate);
-            setCandidateFound(true);
           } catch (apiError) {
             // Fall back to mock data
             const candidate = getCandidateById(response.data.candidateId);
             if (candidate) {
               setSelectedCandidate(candidate);
-              setCandidateFound(true);
             }
           }
         }
       } catch (error) {
         console.error('Error loading candidate data:', error);
-        setCandidateFound(false);
       } finally {
         setLoading(false);
         loadingRef.current = false;
@@ -185,7 +175,6 @@ export function useCandidateData() {
     selectedCandidate,
     candidates,
     loading,
-    candidateFound,
     selectCandidate,
   };
 }
