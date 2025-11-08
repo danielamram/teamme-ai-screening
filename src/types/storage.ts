@@ -1,7 +1,16 @@
+import { Candidate } from './candidate';
+
 export interface SidebarState {
   isOpen: boolean;
   selectedCandidateId: string | null;
   lastOpenedAt?: number;
+}
+
+export interface CandidatesCache {
+  [candidateId: string]: {
+    data: Candidate;
+    timestamp: number;
+  };
 }
 
 export interface StorageSchema {
@@ -9,6 +18,7 @@ export interface StorageSchema {
   selectedCandidateId: string | null;
   sidebarWidth: number;
   theme: 'light' | 'dark';
+  candidatesCache: CandidatesCache;
 }
 
 export type StorageKey = keyof StorageSchema;

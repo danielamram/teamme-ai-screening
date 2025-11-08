@@ -2,7 +2,6 @@ import type { ExtensionMessage, MessageResponse } from '@/types/messages';
 import type { SidebarState } from '@/types/storage';
 import browser from 'webextension-polyfill';
 
-import { getDefaultCandidate } from '@/data/mockCandidates';
 import { DEFAULT_SIDEBAR_STATE } from '@/types/storage';
 import { getStorageItem, setStorageItem } from '@/utils/storage';
 
@@ -12,13 +11,6 @@ browser.runtime.onInstalled.addListener(async () => {
 
   // Always reset to default closed state on install/update
   await setStorageItem('sidebarState', DEFAULT_SIDEBAR_STATE);
-
-  // Set default candidate ID
-  const defaultCandidate = getDefaultCandidate();
-  const existingCandidateId = await getStorageItem('selectedCandidateId');
-  if (!existingCandidateId) {
-    await setStorageItem('selectedCandidateId', defaultCandidate.id);
-  }
 });
 
 // Handle messages from content scripts and popup
@@ -100,31 +92,6 @@ browser.runtime.onMessage.addListener(
             );
 
             sendResponse({ success: true, data: newState });
-            break;
-          }
-
-          case 'GET_CANDIDATE_DATA': {
-            const candidateId = await getStorageItem('selectedCandidateId');
-            sendResponse({ success: true, data: { candidateId } });
-            break;
-          }
-
-          case 'SET_SELECTED_CANDIDATE': {
-            if ('payload' in msg && msg.payload?.candidateId) {
-              await setStorageItem(
-                'selectedCandidateId',
-                msg.payload.candidateId
-              );
-              sendResponse({
-                success: true,
-                data: { candidateId: msg.payload.candidateId },
-              });
-            } else {
-              sendResponse({
-                success: false,
-                error: 'Missing candidateId in SET_SELECTED_CANDIDATE',
-              });
-            }
             break;
           }
 

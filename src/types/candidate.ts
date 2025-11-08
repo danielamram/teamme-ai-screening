@@ -9,11 +9,10 @@ export interface Candidate {
   company: string;
   location: string;
   score: number;
-  whyFit: string[];
-  recommendation: Recommendation;
+  overview: string;
+  strengths: string[];
   recommendationReasoning: string;
   redFlags: string[];
-  gapsToClarify: string[];
 }
 
 // API Response Types
@@ -56,6 +55,7 @@ export interface APICandidateSummary {
   educationSummary: string;
   strengths: string[];
   potentialConcerns: string[];
+  score: number;
   cultureFitIndicators: string[];
   recommendation: string;
   yearsOfExperience: number;

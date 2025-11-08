@@ -2,8 +2,6 @@ export type MessageType =
   | 'TOGGLE_SIDEBAR'
   | 'GET_SIDEBAR_STATE'
   | 'SET_SIDEBAR_STATE'
-  | 'GET_CANDIDATE_DATA'
-  | 'SET_SELECTED_CANDIDATE'
   | 'PING';
 
 export interface BaseMessage {
@@ -25,17 +23,6 @@ export interface SetSidebarStateMessage extends BaseMessage {
   };
 }
 
-export interface GetCandidateDataMessage extends BaseMessage {
-  type: 'GET_CANDIDATE_DATA';
-}
-
-export interface SetSelectedCandidateMessage extends BaseMessage {
-  type: 'SET_SELECTED_CANDIDATE';
-  payload: {
-    candidateId: string;
-  };
-}
-
 export interface PingMessage extends BaseMessage {
   type: 'PING';
 }
@@ -44,8 +31,6 @@ export type ExtensionMessage =
   | ToggleSidebarMessage
   | GetSidebarStateMessage
   | SetSidebarStateMessage
-  | GetCandidateDataMessage
-  | SetSelectedCandidateMessage
   | PingMessage;
 
 export interface MessageResponse<T = unknown> {

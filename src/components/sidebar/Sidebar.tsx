@@ -83,16 +83,16 @@ export default function Sidebar({
                   />
                   {/* Why Fit Section */}
                   <WhyFitSection
-                    title='Summary'
-                    items={selectedCandidate.whyFit}
+                    title='Overview'
+                    items={[selectedCandidate.overview]}
                   />
                   <WhyFitSection
-                    title='Red Flags'
-                    items={selectedCandidate.redFlags}
+                    title='Strengths'
+                    items={selectedCandidate.strengths}
                   />
                   <WhyFitSection
                     title='Gaps to Clarify'
-                    items={selectedCandidate.gapsToClarify}
+                    items={selectedCandidate.redFlags}
                   />
                 </>
               )}

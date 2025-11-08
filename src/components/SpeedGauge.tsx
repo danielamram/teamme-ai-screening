@@ -30,11 +30,12 @@ const getRecommendationLevel = (
   speed: number
 ): 'strong-hire' | 'consider' | 'pass' => {
   if (speed >= 80) return 'strong-hire';
-  if (speed >= 60) return 'consider';
+  if (speed >= 55) return 'consider';
   return 'pass';
 };
 
 export default function SpeedGauge({ speed }: SpeedGaugeProps) {
+  console.log('speed', speed);
   const [currentSpeed, setCurrentSpeed] = useState(0);
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function SpeedGauge({ speed }: SpeedGaugeProps) {
   const level = getRecommendationLevel(speed);
   const color = getRecommendationColor(level);
 
-  // Clamp speed to 1-100 range
+  // Clamp speed to 1-10 range
   const clampedSpeed = Math.min(Math.max(currentSpeed, 1), MAX_SPEED);
 
   const angle = -135 + ((clampedSpeed - 1) / (MAX_SPEED - 1)) * 270;
@@ -92,7 +93,7 @@ export default function SpeedGauge({ speed }: SpeedGaugeProps) {
             </linearGradient>
           </defs>
 
-          {/* Full gauge arc (1-100) with gradient from red to orange to green */}
+          {/* Full gauge arc (1-10) with gradient from red to orange to green */}
           <path
             d='M 30 155 A 85 85 0 1 1 170 155'
             fill='none'
