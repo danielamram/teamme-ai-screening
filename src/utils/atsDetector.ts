@@ -155,3 +155,54 @@ export function extractCandidateIdFromUrl(url: string): string | null {
       return null;
   }
 }
+
+/**
+ * Extract position/job ID from Comeet URL
+ * Format: https://app.comeet.co/app/req/391432?reqStatus=1
+ */
+export function extractComeetPositionId(url: string): string | null {
+  // Pattern matches /req/{positionId} in URL path
+  const match = url.match(/\/req\/([0-9]+)/);
+  return match ? match[1] : null;
+}
+
+/**
+ * Extract position ID from the current URL based on the ATS platform
+ */
+export function extractPositionIdFromUrl(url: string): string | null {
+  const platform = detectATSPlatform(url);
+
+  if (!platform) {
+    return null;
+  }
+
+  switch (platform.name) {
+    case 'Comeet':
+      return extractComeetPositionId(url);
+    // Add more ATS platforms as needed
+    default:
+      return null;
+  }
+}
+
+/**
+ * Page type detection for the extension
+ */
+export type PageType = 'candidate' | 'position' | null;
+
+/**
+ * Detect the type of page (candidate, position, or neither)
+ */
+export function detectPageType(url: string): PageType {
+  // Check if it's a candidate page
+  const candidateId = extractCandidateIdFromUrl(url);
+  if (candidateId) return 'candidate';
+
+  // Check if it's a position page (must not have /can/ in URL)
+  const positionId = extractPositionIdFromUrl(url);
+  if (positionId && !url.includes('/can/')) {
+    return 'position';
+  }
+
+  return null;
+}
