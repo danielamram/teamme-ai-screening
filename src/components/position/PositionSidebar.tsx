@@ -1,5 +1,10 @@
-import { useMemo, useState } from 'react';
-import type { Position, PositionFilters } from '@/types/position';
+import { useCallback, useMemo, useState } from 'react';
+import type {
+  Position,
+  PositionCandidate,
+  PositionFilters,
+  ScoringField,
+} from '@/types/position';
 import { Briefcase, Filter, MapPin, Users, X } from 'lucide-react';
 
 import { COLORS, LAYOUT } from '@/constants/design';
@@ -23,58 +28,274 @@ export default function PositionSidebar({
   const showShimmer = useShimmer(loading);
   const [showFilters, setShowFilters] = useState(false);
 
-  const [filters, setFilters] = useState<PositionFilters>({
-    location: '',
-    ageMin: null,
-    ageMax: null,
-  });
+  const [filters, setFilters] = useState<PositionFilters>({});
 
   // Close sidebar on ESC key
   useEscapeKey(closeSidebar, isOpen);
 
   const shouldShow = position !== null || loading;
 
-  // Get unique locations from candidates
-  const uniqueLocations = useMemo(() => {
-    if (!position) return [];
-    const locations = position.candidates.map((c) => c.location);
-    return Array.from(new Set(locations)).sort();
-  }, [position]);
+  // Get unique values for select fields from candidates
+  const getFieldOptions = useMemo(
+    () =>
+      (fieldId: string): string[] => {
+        if (!position) return [];
+        const values = position.candidates
+          .map((c) => c.scoringValues?.[fieldId])
+          .filter((v): v is string => typeof v === 'string' && v !== '');
+        return Array.from(new Set(values)).sort();
+      },
+    [position]
+  );
+
+  // Helper to check if a candidate matches a filter
+  const candidateMatchesFilter = useCallback(
+    (candidate: PositionCandidate, field: ScoringField): boolean => {
+      const filterValue = filters[field.id];
+      const candidateValue = candidate.scoringValues?.[field.id];
+
+      // No filter applied for this field
+      if (
+        filterValue === undefined ||
+        filterValue === null ||
+        filterValue === ''
+      ) {
+        return true;
+      }
+
+      // Handle different field types
+      switch (field.type) {
+        case 'range': {
+          if (
+            Array.isArray(filterValue) &&
+            typeof candidateValue === 'number'
+          ) {
+            const [min, max] = filterValue;
+            if (typeof min === 'number' && min !== null && candidateValue < min)
+              return false;
+            if (typeof max === 'number' && max !== null && candidateValue > max)
+              return false;
+          }
+          return true;
+        }
+        case 'select': {
+          return candidateValue === filterValue;
+        }
+        case 'multiselect': {
+          if (Array.isArray(filterValue) && filterValue.length > 0) {
+            if (Array.isArray(candidateValue)) {
+              return filterValue.some(
+                (v) =>
+                  typeof v === 'string' &&
+                  (candidateValue as string[]).includes(v)
+              );
+            }
+            if (typeof candidateValue === 'string') {
+              return filterValue.some(
+                (v) => typeof v === 'string' && v === candidateValue
+              );
+            }
+          }
+          return true;
+        }
+        case 'boolean': {
+          return candidateValue === filterValue;
+        }
+        default:
+          return true;
+      }
+    },
+    [filters]
+  );
 
   // Filter candidates based on filters
-  const filteredCandidates = useMemo(() => {
-    if (!position) return [];
-
-    return position.candidates.filter((candidate) => {
-      // Location filter
-      if (filters.location && candidate.location !== filters.location) {
-        return false;
-      }
-
-      // Age filter
-      if (filters.ageMin !== null && candidate.age < filters.ageMin) {
-        return false;
-      }
-      if (filters.ageMax !== null && candidate.age > filters.ageMax) {
-        return false;
-      }
-
-      return true;
-    });
-  }, [position, filters]);
+  const filteredCandidates = useMemo(
+    () =>
+      position?.candidates.filter((candidate) =>
+        position.scoringFields?.every((field) =>
+          candidateMatchesFilter(candidate, field)
+        )
+      ) ?? [],
+    [position, candidateMatchesFilter]
+  );
 
   const resetFilters = () => {
-    setFilters({
-      location: '',
-      ageMin: null,
-      ageMax: null,
-    });
+    setFilters({});
   };
 
-  const hasActiveFilters =
-    filters.location !== '' ||
-    filters.ageMin !== null ||
-    filters.ageMax !== null;
+  const hasActiveFilters = Object.keys(filters).some((key) => {
+    const value = filters[key];
+    if (Array.isArray(value)) {
+      return value.length > 0 && value.some((v) => v !== null && v !== '');
+    }
+    return value !== null && value !== '' && value !== undefined;
+  });
+
+  // Helper function to render filter inputs based on field type
+  const renderFilterField = (
+    field: ScoringField,
+    currentFilters: PositionFilters,
+    updateFilters: (filters: PositionFilters) => void,
+    getOptions: (fieldId: string) => string[]
+  ) => {
+    const inputStyle = {
+      width: '100%',
+      padding: '6px 8px',
+      fontSize: '12px',
+      border: `1px solid ${COLORS.border.default}`,
+      borderRadius: '4px',
+      backgroundColor: COLORS.white,
+      color: COLORS.text.primary,
+    };
+
+    switch (field.type) {
+      case 'range': {
+        const rangeValue = currentFilters[field.id] as
+          | [number, number]
+          | undefined;
+        const min = rangeValue?.[0] ?? null;
+        const max = rangeValue?.[1] ?? null;
+
+        return (
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input
+              type='number'
+              placeholder='Min'
+              min={field.min}
+              max={field.max}
+              value={min ?? ''}
+              onChange={(e) => {
+                const newMin = e.target.value ? Number(e.target.value) : null;
+                updateFilters({
+                  ...currentFilters,
+                  [field.id]: [newMin, max],
+                });
+              }}
+              aria-label={`Minimum ${field.label}`}
+              style={{ ...inputStyle, flex: 1 }}
+            />
+            <input
+              type='number'
+              placeholder='Max'
+              min={field.min}
+              max={field.max}
+              value={max ?? ''}
+              onChange={(e) => {
+                const newMax = e.target.value ? Number(e.target.value) : null;
+                updateFilters({
+                  ...currentFilters,
+                  [field.id]: [min, newMax],
+                });
+              }}
+              aria-label={`Maximum ${field.label}`}
+              style={{ ...inputStyle, flex: 1 }}
+            />
+          </div>
+        );
+      }
+
+      case 'select': {
+        const options = field.options ?? getOptions(field.id);
+        return (
+          <select
+            id={`filter-${field.id}`}
+            value={(currentFilters[field.id] as string) ?? ''}
+            onChange={(e) =>
+              updateFilters({ ...currentFilters, [field.id]: e.target.value })
+            }
+            style={inputStyle}
+          >
+            <option value=''>All</option>
+            {options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        );
+      }
+
+      case 'multiselect': {
+        const options = field.options ?? getOptions(field.id);
+        const selectedValues =
+          (currentFilters[field.id] as string[]) ?? ([] as string[]);
+
+        return (
+          <div
+            style={{
+              maxHeight: '120px',
+              overflowY: 'auto',
+              border: `1px solid ${COLORS.border.default}`,
+              borderRadius: '4px',
+              padding: '4px',
+              backgroundColor: COLORS.white,
+            }}
+          >
+            {options.map((option) => {
+              const checkboxId = `filter-${field.id}-${option}`;
+              return (
+                <label
+                  key={option}
+                  htmlFor={checkboxId}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '4px 6px',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    color: COLORS.text.primary,
+                  }}
+                >
+                  <input
+                    id={checkboxId}
+                    type='checkbox'
+                    checked={selectedValues.includes(option)}
+                    onChange={(e) => {
+                      const newValues = e.target.checked
+                        ? [...selectedValues, option]
+                        : selectedValues.filter((v) => v !== option);
+                      updateFilters({
+                        ...currentFilters,
+                        [field.id]: newValues,
+                      });
+                    }}
+                    style={{ marginRight: '6px' }}
+                  />
+                  {option}
+                </label>
+              );
+            })}
+          </div>
+        );
+      }
+
+      case 'boolean': {
+        return (
+          <select
+            id={`filter-${field.id}`}
+            value={
+              currentFilters[field.id] === undefined
+                ? ''
+                : String(currentFilters[field.id])
+            }
+            onChange={(e) => {
+              const value =
+                e.target.value === '' ? undefined : e.target.value === 'true';
+              updateFilters({ ...currentFilters, [field.id]: value });
+            }}
+            style={inputStyle}
+          >
+            <option value=''>All</option>
+            <option value='true'>Yes</option>
+            <option value='false'>No</option>
+          </select>
+        );
+      }
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
@@ -262,130 +483,76 @@ export default function PositionSidebar({
                   backgroundColor: COLORS.gray[50],
                 }}
               >
-                <div style={{ marginBottom: '12px' }}>
-                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-                  <label
-                    htmlFor='location-filter'
-                    style={{
-                      display: 'block',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: COLORS.text.primary,
-                      marginBottom: '6px',
-                    }}
-                  >
-                    Location
-                  </label>
-                  <select
-                    id='location-filter'
-                    value={filters.location}
-                    onChange={(e) =>
-                      setFilters({ ...filters, location: e.target.value })
-                    }
-                    style={{
-                      width: '100%',
-                      padding: '6px 8px',
-                      fontSize: '12px',
-                      border: `1px solid ${COLORS.border.default}`,
-                      borderRadius: '4px',
-                      backgroundColor: COLORS.white,
-                      color: COLORS.text.primary,
-                    }}
-                  >
-                    <option value=''>All Locations</option>
-                    {uniqueLocations.map((loc) => (
-                      <option key={loc} value={loc}>
-                        {loc}
-                      </option>
+                {position?.scoringFields &&
+                position.scoringFields.length > 0 ? (
+                  <>
+                    {position.scoringFields.map((field) => (
+                      <div key={field.id} style={{ marginBottom: '12px' }}>
+                        <label
+                          htmlFor={`filter-${field.id}`}
+                          style={{
+                            display: 'block',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            color: COLORS.text.primary,
+                            marginBottom: '6px',
+                          }}
+                        >
+                          {field.label}
+                          {field.weight > 70 && (
+                            <span
+                              style={{
+                                marginLeft: '4px',
+                                fontSize: '10px',
+                                color: COLORS.primary.indigo,
+                                fontWeight: '500',
+                              }}
+                            >
+                              (High Priority)
+                            </span>
+                          )}
+                        </label>
+                        {renderFilterField(
+                          field,
+                          filters,
+                          setFilters,
+                          getFieldOptions
+                        )}
+                      </div>
                     ))}
-                  </select>
-                </div>
 
-                <div style={{ marginBottom: '12px' }}>
+                    {hasActiveFilters && (
+                      <button
+                        type='button'
+                        onClick={resetFilters}
+                        style={{
+                          width: '100%',
+                          padding: '6px 8px',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          color: COLORS.primary.indigo,
+                          backgroundColor: 'transparent',
+                          border: `1px solid ${COLORS.primary.indigo}`,
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                        }}
+                      >
+                        Reset Filters
+                      </button>
+                    )}
+                  </>
+                ) : (
                   <div
                     style={{
-                      display: 'block',
+                      padding: '12px',
+                      textAlign: 'center',
                       fontSize: '12px',
-                      fontWeight: '600',
-                      color: COLORS.text.primary,
-                      marginBottom: '6px',
+                      color: COLORS.text.muted,
                     }}
                   >
-                    Age Range
+                    No filters configured for this position
                   </div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <input
-                      type='number'
-                      placeholder='Min'
-                      min='18'
-                      max='99'
-                      value={filters.ageMin ?? ''}
-                      onChange={(e) =>
-                        setFilters({
-                          ...filters,
-                          ageMin: e.target.value
-                            ? Number(e.target.value)
-                            : null,
-                        })
-                      }
-                      aria-label='Minimum age'
-                      style={{
-                        flex: 1,
-                        padding: '6px 8px',
-                        fontSize: '12px',
-                        border: `1px solid ${COLORS.border.default}`,
-                        borderRadius: '4px',
-                        backgroundColor: COLORS.white,
-                        color: COLORS.text.primary,
-                      }}
-                    />
-                    <input
-                      type='number'
-                      placeholder='Max'
-                      min='18'
-                      max='99'
-                      value={filters.ageMax ?? ''}
-                      onChange={(e) =>
-                        setFilters({
-                          ...filters,
-                          ageMax: e.target.value
-                            ? Number(e.target.value)
-                            : null,
-                        })
-                      }
-                      aria-label='Maximum age'
-                      style={{
-                        flex: 1,
-                        padding: '6px 8px',
-                        fontSize: '12px',
-                        border: `1px solid ${COLORS.border.default}`,
-                        borderRadius: '4px',
-                        backgroundColor: COLORS.white,
-                        color: COLORS.text.primary,
-                      }}
-                    />
-                  </div>
-                </div>
-
-                {hasActiveFilters && (
-                  <button
-                    type='button'
-                    onClick={resetFilters}
-                    style={{
-                      width: '100%',
-                      padding: '6px 8px',
-                      fontSize: '11px',
-                      fontWeight: '600',
-                      color: COLORS.primary.indigo,
-                      backgroundColor: 'transparent',
-                      border: `1px solid ${COLORS.primary.indigo}`,
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                    }}
-                  >
-                    Reset Filters
-                  </button>
                 )}
               </div>
             )}

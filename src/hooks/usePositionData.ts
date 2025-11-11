@@ -55,10 +55,16 @@ function generateMockCandidates(positionId: string): PositionCandidate[] {
     'shortlisted',
   ];
 
+  const techStacks = ['React', 'Vue', 'Angular', 'Node.js', 'Python', 'Java'];
+  const educationLevels = ['Bachelor', 'Master', 'PhD', 'Bootcamp'];
+  const seniorities = ['Junior', 'Mid-Level', 'Senior', 'Lead'];
+
   // Generate 8 candidates, but we'll show top 5 by score
   const candidates: PositionCandidate[] = [];
   for (let i = 0; i < 8; i += 1) {
     const score = Math.floor(Math.random() * 30) + 70; // 70-99
+    const yearsExp = Math.floor(Math.random() * 10) + 1; // 1-10
+
     candidates.push({
       id: `${positionId}-candidate-${i + 1}`,
       name: `${firstNames[i % firstNames.length]} ${lastNames[i % lastNames.length]}`,
@@ -72,6 +78,20 @@ function generateMockCandidates(positionId: string): PositionCandidate[] {
         Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
       ).toISOString(),
       status: statuses[i % statuses.length],
+      scoringValues: {
+        yearsExperience: yearsExp,
+        techStack: techStacks[i % techStacks.length],
+        education: educationLevels[i % educationLevels.length],
+        seniority:
+          seniorities[
+            Math.min(i % seniorities.length, Math.floor(yearsExp / 3))
+          ],
+        remoteWork: i % 2 === 0,
+        skills: [
+          techStacks[i % techStacks.length],
+          techStacks[(i + 1) % techStacks.length],
+        ],
+      },
     });
   }
 
@@ -116,6 +136,59 @@ function generateMockPosition(positionId: string): Position {
     status: 'open',
     totalCandidates: Math.floor(Math.random() * 50) + 20,
     candidates,
+    scoringFields: [
+      {
+        id: 'yearsExperience',
+        label: 'Years of Experience',
+        type: 'range',
+        weight: 85,
+        min: 0,
+        max: 15,
+      },
+      {
+        id: 'techStack',
+        label: 'Tech Stack',
+        type: 'select',
+        weight: 90,
+        options: ['React', 'Vue', 'Angular', 'Node.js', 'Python', 'Java'],
+      },
+      {
+        id: 'education',
+        label: 'Education Level',
+        type: 'select',
+        weight: 60,
+        options: ['Bachelor', 'Master', 'PhD', 'Bootcamp'],
+      },
+      {
+        id: 'seniority',
+        label: 'Seniority Level',
+        type: 'select',
+        weight: 75,
+        options: ['Junior', 'Mid-Level', 'Senior', 'Lead'],
+      },
+      {
+        id: 'remoteWork',
+        label: 'Open to Remote Work',
+        type: 'boolean',
+        weight: 50,
+      },
+      {
+        id: 'skills',
+        label: 'Required Skills',
+        type: 'multiselect',
+        weight: 80,
+        options: [
+          'React',
+          'Vue',
+          'Angular',
+          'Node.js',
+          'Python',
+          'Java',
+          'TypeScript',
+          'GraphQL',
+        ],
+      },
+    ],
   };
 }
 
