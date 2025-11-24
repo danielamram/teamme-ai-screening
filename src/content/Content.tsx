@@ -1,5 +1,6 @@
 import { JSX } from 'react';
 
+import FabHelpMenu from '@/components/fab/FabHelpMenu';
 import PositionSidebar from '@/components/position/PositionSidebar';
 import Sidebar from '@/components/sidebar/Sidebar';
 import { useCandidateData } from '@/hooks/useCandidateData';
@@ -24,6 +25,7 @@ export default function Content(): JSX.Element | null {
       {pageType === 'position' && (
         <PositionSidebar position={position} loading={positionLoading} />
       )}
+      <FabHelpMenu />
     </div>
   );
 }
