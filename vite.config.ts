@@ -73,6 +73,9 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   ],
+  optimizeDeps: {
+    include: ['react', 'react-dom', '@ai-sdk/react', 'ai'],
+  },
   server: {
     cors: {
       origin: [/chrome-extension:\/\//, /moz-extension:\/\//],
@@ -84,6 +87,7 @@ export default defineConfig(({ mode }) => ({
       '@utils': resolve(__dirname, './src/utils'),
       '@assets': resolve(__dirname, './src/assets'),
     },
+    dedupe: ['react', 'react-dom'],
   },
   build: {
     outDir: mode === 'firefox' ? 'dist_firefox' : 'dist_chrome',

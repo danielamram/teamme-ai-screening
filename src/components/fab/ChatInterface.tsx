@@ -1,11 +1,8 @@
-import React, { JSX, useRef, useEffect } from 'react';
-import { ArrowUp, Copy, Check, X, Paperclip, Square } from 'lucide-react';
-
-export interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-}
+import React, { JSX, useCallback, useEffect, useRef, useState } from 'react';
+import type { UIMessage } from 'ai';
+import { useChat } from '@ai-sdk/react';
+import { DefaultChatTransport } from 'ai';
+import { ArrowUp, Check, Copy, Paperclip, Square, X } from 'lucide-react';
 
 interface SuggestionItem {
   text: string;
@@ -14,36 +11,46 @@ interface SuggestionItem {
 interface ChatInterfaceProps {
   isOpen: boolean;
   onClose: () => void;
-  inputValue: string;
-  onInputChange: (value: string) => void;
-  onSubmit: () => void;
-  onSuggestionClick: (text: string) => void;
   suggestions: SuggestionItem[];
-  messages: Message[];
-  isLoading?: boolean;
-  onStop?: () => void;
+  apiEndpoint: string;
 }
 
-function MessageItem({ message }: { message: Message }) {
-  const [copied, setCopied] = React.useState(false);
+const extractMessageText = (message: UIMessage): string =>
+  message.parts
+    .map((part) => {
+      if ('text' in part && typeof part.text === 'string') {
+        return part.text;
+      }
+      return '';
+    })
+    .filter((text) => text.trim().length > 0)
+    .join('\n')
+    .trim();
+
+function MessageItem({ message }: { message: UIMessage }): JSX.Element {
+  const [copied, setCopied] = useState(false);
+  const messageText = extractMessageText(message);
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(message.content);
+    await navigator.clipboard.writeText(messageText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   if (message.role === 'user') {
     return (
-      <div className="flex justify-end">
+      <div className='flex justify-end'>
         <div
-          className="max-w-[85%] rounded-2xl px-4 py-3"
+          className='max-w-[85%] rounded-2xl px-4 py-3'
           style={{
             backgroundColor: '#f4f4f5',
           }}
         >
-          <p className="text-sm whitespace-pre-wrap" style={{ color: '#18181b' }}>
-            {message.content}
+          <p
+            className='whitespace-pre-wrap text-sm'
+            style={{ color: '#18181b' }}
+          >
+            {messageText}
           </p>
         </div>
       </div>
@@ -51,31 +58,34 @@ function MessageItem({ message }: { message: Message }) {
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex gap-3">
+    <div className='flex flex-col gap-2'>
+      <div className='flex gap-3'>
         <div
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+          className='flex h-8 w-8 shrink-0 items-center justify-center rounded-full'
           style={{ backgroundColor: '#1e1b4b' }}
         >
-          <span className="text-xs font-medium text-white">T</span>
+          <span className='text-xs font-medium text-white'>T</span>
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm whitespace-pre-wrap" style={{ color: '#18181b' }}>
-            {message.content}
+        <div className='min-w-0 flex-1'>
+          <p
+            className='whitespace-pre-wrap text-sm'
+            style={{ color: '#18181b' }}
+          >
+            {messageText}
           </p>
         </div>
       </div>
-      <div className="flex gap-1 ml-11">
+      <div className='ml-11 flex gap-1'>
         <button
-          type="button"
+          type='button'
           onClick={handleCopy}
-          className="rounded-md p-1.5 transition-colors hover:bg-gray-100"
-          aria-label="Copy message"
+          className='rounded-md p-1.5 transition-colors hover:bg-gray-100'
+          aria-label='Copy message'
         >
           {copied ? (
-            <Check size={14} color="#10b981" />
+            <Check size={14} color='#10b981' />
           ) : (
-            <Copy size={14} color="#71717a" />
+            <Copy size={14} color='#71717a' />
           )}
         </button>
       </div>
@@ -91,22 +101,22 @@ function SuggestedActions({
   onSuggestionClick: (text: string) => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center flex-1 px-4">
-      <div className="mb-8">
+    <div className='flex flex-1 flex-col items-center justify-center px-4'>
+      <div className='mb-8'>
         <h2
-          className="text-center text-2xl font-semibold"
+          className='text-center text-2xl font-semibold'
           style={{ color: '#18181b' }}
         >
           How can I help you today?
         </h2>
       </div>
-      <div className="grid grid-cols-1 gap-2 w-full max-w-sm">
+      <div className='grid w-full max-w-sm grid-cols-1 gap-2'>
         {suggestions.map((suggestion) => (
           <button
             key={suggestion.text}
-            type="button"
+            type='button'
             onClick={() => onSuggestionClick(suggestion.text)}
-            className="rounded-xl border px-4 py-3 text-left text-sm transition-colors hover:bg-gray-50"
+            className='rounded-xl border px-4 py-3 text-left text-sm transition-colors hover:bg-gray-50'
             style={{
               borderColor: '#e4e4e7',
               color: '#18181b',
@@ -120,20 +130,31 @@ function SuggestedActions({
   );
 }
 
+const POSITION_ID = '1D.06B';
+
 export default function ChatInterface({
   isOpen,
   onClose,
-  inputValue,
-  onInputChange,
-  onSubmit,
-  onSuggestionClick,
   suggestions,
-  messages,
-  isLoading = false,
-  onStop,
+  apiEndpoint,
 }: ChatInterfaceProps): JSX.Element | null {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [input, setInput] = useState('');
+
+  const { messages, sendMessage, status, stop } = useChat<UIMessage>({
+    transport: new DefaultChatTransport({
+      api: apiEndpoint,
+      body: {
+        positionId: POSITION_ID,
+      },
+    }),
+    onError: (error: Error) => {
+      // eslint-disable-next-line no-console
+      console.error('Chat error:', error);
+    },
+  });
+  const isStreaming = status === 'submitted' || status === 'streaming';
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -146,22 +167,39 @@ export default function ChatInterface({
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
     }
-  }, [inputValue]);
+  }, [input]);
+
+  const sendCurrentMessage = useCallback(async () => {
+    const trimmedInput = input.trim();
+    if (!trimmedInput || isStreaming) return;
+
+    try {
+      await sendMessage({ text: trimmedInput });
+      setInput('');
+    } catch {
+      // Errors surface via the onError callback from useChat.
+    }
+  }, [input, isStreaming, sendMessage]);
 
   if (!isOpen) return null;
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      onSubmit();
+      sendCurrentMessage();
     }
+  };
+
+  const handleSuggestionClick = (text: string) => {
+    setInput(text);
+    textareaRef.current?.focus();
   };
 
   const hasMessages = messages.length > 0;
 
   return (
     <div
-      className="fixed flex flex-col overflow-hidden rounded-2xl shadow-2xl"
+      className='fixed flex flex-col overflow-hidden rounded-2xl shadow-2xl'
       style={{
         zIndex: 2147483646,
         bottom: '96px',
@@ -174,51 +212,60 @@ export default function ChatInterface({
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between px-4 py-3"
+        className='flex items-center justify-between px-4 py-3'
         style={{
           borderBottom: '1px solid #e4e4e7',
         }}
       >
-        <div className="flex items-center gap-2">
+        <div className='flex items-center gap-2'>
           <div
-            className="flex h-8 w-8 items-center justify-center rounded-full"
+            className='flex h-8 w-8 items-center justify-center rounded-full'
             style={{ backgroundColor: '#1e1b4b' }}
           >
-            <span className="text-xs font-medium text-white">T</span>
+            <span className='text-xs font-medium text-white'>T</span>
           </div>
-          <span className="text-sm font-semibold" style={{ color: '#18181b' }}>
+          <span className='text-sm font-semibold' style={{ color: '#18181b' }}>
             TeamMe
           </span>
         </div>
         <button
-          type="button"
+          type='button'
           onClick={onClose}
-          className="rounded-md p-1.5 transition-colors hover:bg-gray-100"
-          aria-label="Close chat"
+          className='rounded-md p-1.5 transition-colors hover:bg-gray-100'
+          aria-label='Close chat'
         >
-          <X size={18} color="#71717a" />
+          <X size={18} color='#71717a' />
         </button>
       </div>
 
       {/* Messages Area or Suggested Actions */}
       {hasMessages ? (
-        <div className="flex-1 overflow-y-auto px-4 py-4">
-          <div className="flex flex-col gap-6">
+        <div className='flex-1 overflow-y-auto px-4 py-4'>
+          <div className='flex flex-col gap-6'>
             {messages.map((message) => (
               <MessageItem key={message.id} message={message} />
             ))}
-            {isLoading && (
-              <div className="flex gap-3">
+            {isStreaming && (
+              <div className='flex gap-3'>
                 <div
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+                  className='flex h-8 w-8 shrink-0 items-center justify-center rounded-full'
                   style={{ backgroundColor: '#1e1b4b' }}
                 >
-                  <span className="text-xs font-medium text-white">T</span>
+                  <span className='text-xs font-medium text-white'>T</span>
                 </div>
-                <div className="flex items-center gap-1 py-2">
-                  <div className="h-2 w-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="h-2 w-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="h-2 w-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                <div className='flex items-center gap-1 py-2'>
+                  <div
+                    className='h-2 w-2 animate-bounce rounded-full bg-gray-400'
+                    style={{ animationDelay: '0ms' }}
+                  />
+                  <div
+                    className='h-2 w-2 animate-bounce rounded-full bg-gray-400'
+                    style={{ animationDelay: '150ms' }}
+                  />
+                  <div
+                    className='h-2 w-2 animate-bounce rounded-full bg-gray-400'
+                    style={{ animationDelay: '300ms' }}
+                  />
                 </div>
               </div>
             )}
@@ -228,14 +275,14 @@ export default function ChatInterface({
       ) : (
         <SuggestedActions
           suggestions={suggestions}
-          onSuggestionClick={onSuggestionClick}
+          onSuggestionClick={handleSuggestionClick}
         />
       )}
 
       {/* Input Area */}
-      <div className="px-4 pb-4">
+      <div className='px-4 pb-4'>
         <div
-          className="flex flex-col rounded-2xl border"
+          className='flex flex-col rounded-2xl border'
           style={{
             borderColor: '#e4e4e7',
             backgroundColor: '#fafafa',
@@ -243,12 +290,12 @@ export default function ChatInterface({
         >
           <textarea
             ref={textareaRef}
-            value={inputValue}
-            onChange={(e) => onInputChange(e.target.value)}
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Send a message..."
+            placeholder='Send a message...'
             rows={1}
-            className="w-full resize-none bg-transparent px-4 pt-3 pb-2 text-sm outline-none"
+            className='w-full resize-none bg-transparent px-4 pb-2 pt-3 text-sm outline-none'
             style={{
               border: 'none',
               color: '#18181b',
@@ -256,41 +303,46 @@ export default function ChatInterface({
               maxHeight: '200px',
             }}
           />
-          <div className="flex items-center justify-between px-3 pb-2">
+          <div className='flex items-center justify-between px-3 pb-2'>
             <button
-              type="button"
-              className="rounded-md p-1.5 transition-colors hover:bg-gray-200"
-              aria-label="Attach file"
+              type='button'
+              className='rounded-md p-1.5 transition-colors hover:bg-gray-200'
+              aria-label='Attach file'
             >
-              <Paperclip size={18} color="#71717a" />
+              <Paperclip size={18} color='#71717a' />
             </button>
-            {isLoading ? (
+            {isStreaming ? (
               <button
-                type="button"
-                onClick={onStop}
-                className="rounded-full p-2 transition-colors"
+                type='button'
+                onClick={() => {
+                  stop();
+                }}
+                className='rounded-full p-2 transition-colors'
                 style={{
                   backgroundColor: '#18181b',
                 }}
-                aria-label="Stop generating"
+                aria-label='Stop generating'
               >
-                <Square size={14} color="#FFFFFF" fill="#FFFFFF" />
+                <Square size={14} color='#FFFFFF' fill='#FFFFFF' />
               </button>
             ) : (
               <button
-                type="button"
-                onClick={onSubmit}
-                className="rounded-full p-2 transition-colors"
-                style={{
-                  backgroundColor: inputValue.trim() ? '#18181b' : '#e4e4e7',
-                  cursor: inputValue.trim() ? 'pointer' : 'default',
+                type='button'
+                onClick={() => {
+                  sendCurrentMessage();
                 }}
-                aria-label="Send message"
-                disabled={!inputValue.trim()}
+                className='rounded-full p-2 transition-colors'
+                style={{
+                  backgroundColor:
+                    input.trim() && !isStreaming ? '#18181b' : '#e4e4e7',
+                  cursor: input.trim() && !isStreaming ? 'pointer' : 'default',
+                }}
+                aria-label='Send message'
+                disabled={!input.trim() || isStreaming}
               >
                 <ArrowUp
                   size={14}
-                  color={inputValue.trim() ? '#FFFFFF' : '#a1a1aa'}
+                  color={input.trim() && !isStreaming ? '#FFFFFF' : '#a1a1aa'}
                 />
               </button>
             )}
