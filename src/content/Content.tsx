@@ -22,7 +22,7 @@ export default function Content(): JSX.Element | null {
         <PositionSidebar position={position} loading={positionLoading} />
       )} */}
 
-      {pageType === 'candidate' || (pageType === 'position' && <FabHelpMenu />)}
+      {(pageType === 'candidate' || pageType === 'position') && <FabHelpMenu />}
     </div>
   );
 }
