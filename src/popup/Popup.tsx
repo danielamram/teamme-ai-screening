@@ -1,145 +1,97 @@
-import { JSX, useEffect, useState } from 'react';
-import type { SidebarState } from '@/types/storage';
-import { Eye, EyeOff, Settings, Sparkles, Users } from 'lucide-react';
-
-import { DEFAULT_SIDEBAR_STATE } from '@/types/storage';
-import { sendMessage } from '@/utils/messaging';
+import { JSX, useState } from 'react';
+import { ArrowRight, Plus, Send } from 'lucide-react';
 
 export default function Popup(): JSX.Element {
-  const [sidebarState, setSidebarState] = useState<SidebarState>(
-    DEFAULT_SIDEBAR_STATE
-  );
-  const [loading, setLoading] = useState(false);
+  const [inputValue, setInputValue] = useState('');
 
-  // Load sidebar state on mount
-  useEffect(() => {
-    const loadState = async () => {
-      const response = await sendMessage<SidebarState>({
-        type: 'GET_SIDEBAR_STATE',
-      });
-      if (response.success && response.data) {
-        setSidebarState(response.data);
-      }
-    };
+  const prompts = [
+    'What can TeamMe AI do for recruiting?',
+    'Summarize top candidates for this position',
+    'Compare candidates by skills and experience',
+  ];
 
-    loadState();
-  }, []);
+  const handlePromptClick = (prompt: string) => {
+    setInputValue(prompt);
+  };
 
-  const handleToggleSidebar = async () => {
-    setLoading(true);
-    try {
-      const response = await sendMessage<SidebarState>({
-        type: 'TOGGLE_SIDEBAR',
-      });
-      if (response.success && response.data) {
-        setSidebarState(response.data);
-      }
-    } catch (error) {
-      console.error('Error toggling sidebar:', error);
-    } finally {
-      setLoading(false);
+  const handleSubmit = () => {
+    if (inputValue.trim()) {
+      // Handle submission
+      console.log('Submitted:', inputValue);
+      setInputValue('');
     }
   };
 
   return (
-    <div id='my-ext' className='w-[320px] bg-white p-4' data-theme='light'>
-      <div className='space-y-4'>
-        {/* Header */}
-        <div
-          className='flex items-center gap-3 border-b pb-4'
-          style={{ borderColor: '#E4E6E8' }}
-        >
-          <div className='rounded-lg bg-indigo-600 p-2'>
-            <Sparkles size={24} className='text-white' />
-          </div>
-          <div>
-            <h1 className='text-lg font-bold' style={{ color: '#1F2024' }}>
-              ATS Screening AI
-            </h1>
-            <p className='text-xs' style={{ color: '#666B73' }}>
-              Candidate Analysis Tool
-            </p>
+    <div id='my-ext' className='w-[380px] bg-white' data-theme='light'>
+      <div className='flex min-h-[500px] flex-col p-6'>
+        {/* Main content area */}
+        <div className='flex flex-1 flex-col items-center justify-center'>
+          {/* Headline */}
+          <h1 className='mb-32 text-center text-2xl font-normal text-indigo-500'>
+            Ask about your candidates
+          </h1>
+
+          {/* Prompts */}
+          <div className='w-full space-y-3'>
+            {prompts.map((prompt) => (
+              <button
+                key={prompt}
+                type='button'
+                onClick={() => handlePromptClick(prompt)}
+                className='flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-gray-100'
+                style={{ color: '#1F2024' }}
+              >
+                <ArrowRight size={16} className='shrink-0 text-gray-400' />
+                <span>{prompt}</span>
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Status card */}
-        <div
-          className='rounded-lg border p-4'
-          style={{ borderColor: '#E4E6E8', backgroundColor: '#F1F2F4' }}
-        >
-          <div className='mb-2 flex items-center justify-between'>
-            <span className='text-sm font-medium' style={{ color: '#1F2024' }}>
-              Sidebar Status
-            </span>
-            <div
-              className={`rounded-full px-2 py-1 text-xs font-semibold ${
-                sidebarState.isOpen
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-gray-100 text-gray-600'
-              }`}
-            >
-              {sidebarState.isOpen ? 'Open' : 'Closed'}
+        {/* Input area */}
+        <div className='mt-6'>
+          <div
+            className='rounded-2xl border px-4 py-3'
+            style={{ borderColor: '#E4E6E8' }}
+          >
+            <input
+              type='text'
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+              placeholder='Try @candidate name'
+              className='w-full bg-transparent text-sm outline-none'
+              style={{ color: '#1F2024' }}
+            />
+            <div className='mt-2 flex items-center justify-between'>
+              <button
+                type='button'
+                className='rounded-full p-1 transition-colors hover:bg-gray-100'
+              >
+                <Plus size={20} className='text-gray-500' />
+              </button>
+              <button
+                type='button'
+                onClick={handleSubmit}
+                disabled={!inputValue.trim()}
+                className={`rounded-full p-2 ${
+                  inputValue.trim()
+                    ? 'bg-indigo-500 text-white'
+                    : 'bg-gray-100 text-gray-400'
+                }`}
+              >
+                <Send size={16} />
+              </button>
             </div>
           </div>
-          {sidebarState.lastOpenedAt && (
-            <p className='text-xs' style={{ color: '#616161' }}>
-              Last opened:{' '}
-              {new Date(sidebarState.lastOpenedAt).toLocaleString()}
-            </p>
-          )}
-        </div>
 
-        {/* Toggle button */}
-        <button
-          type='button'
-          onClick={handleToggleSidebar}
-          disabled={loading}
-          className='btn btn-primary w-full'
-        >
-          {loading ? (
-            <span className='loading loading-spinner loading-sm' />
-          ) : (
-            <>
-              {sidebarState.isOpen ? <EyeOff size={18} /> : <Eye size={18} />}
-              {sidebarState.isOpen ? 'Hide' : 'Show'} Sidebar
-            </>
-          )}
-        </button>
-
-        {/* Quick actions */}
-        <div
-          className='space-y-2 border-t pt-4'
-          style={{ borderColor: '#E4E6E8' }}
-        >
-          <p
-            className='text-xs font-semibold uppercase tracking-wide'
-            style={{ color: '#666B73' }}
-          >
-            Quick Actions
-          </p>
-          <button
-            type='button'
-            className='btn btn-outline btn-sm w-full justify-start'
-          >
-            <Users size={16} />
-            View All Candidates
-          </button>
-          <button
-            type='button'
-            className='btn btn-outline btn-sm w-full justify-start'
-          >
-            <Settings size={16} />
-            Settings
-          </button>
-        </div>
-
-        {/* Footer */}
-        <div
-          className='border-t pt-4 text-center'
-          style={{ borderColor: '#E4E6E8' }}
-        >
-          <p className='text-xs' style={{ color: '#666B73' }}>
-            AI-powered candidate screening for ATS platforms
+          {/* Disclaimer */}
+          <p className='mt-3 text-center text-xs text-gray-500'>
+            TeamMe AI can make mistakes, so double-check responses.{' '}
+            <a href='#' className='underline'>
+              Learn more
+            </a>
           </p>
         </div>
       </div>
