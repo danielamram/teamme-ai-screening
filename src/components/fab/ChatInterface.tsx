@@ -3,6 +3,7 @@ import type { UIMessage } from 'ai';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 import { ArrowUp, Check, Copy, Paperclip, Square, X } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 interface SuggestionItem {
   text: string;
@@ -67,12 +68,75 @@ function MessageItem({ message }: { message: UIMessage }): JSX.Element {
           <span className='text-xs font-medium text-white'>T</span>
         </div>
         <div className='min-w-0 flex-1'>
-          <p
-            className='whitespace-pre-wrap text-sm'
+          <div
+            className='prose prose-sm max-w-none text-sm'
             style={{ color: '#18181b' }}
           >
-            {messageText}
-          </p>
+            <ReactMarkdown
+              components={{
+                p: ({ children }) => (
+                  <p className='mb-2 last:mb-0'>{children}</p>
+                ),
+                ul: ({ children }) => (
+                  <ul className='mb-2 list-disc pl-4 last:mb-0'>{children}</ul>
+                ),
+                ol: ({ children }) => (
+                  <ol className='mb-2 list-decimal pl-4 last:mb-0'>
+                    {children}
+                  </ol>
+                ),
+                li: ({ children }) => <li className='mb-1'>{children}</li>,
+                code: ({ className, children }) => {
+                  const isInline = !className;
+                  return isInline ? (
+                    <code className='rounded bg-gray-100 px-1 py-0.5 text-xs'>
+                      {children}
+                    </code>
+                  ) : (
+                    <code
+                      className={`block overflow-x-auto rounded bg-gray-100 p-2 text-xs ${className}`}
+                    >
+                      {children}
+                    </code>
+                  );
+                },
+                pre: ({ children }) => (
+                  <pre className='mb-2 overflow-x-auto rounded bg-gray-100 p-2 last:mb-0'>
+                    {children}
+                  </pre>
+                ),
+                a: ({ href, children }) => (
+                  <a
+                    href={href}
+                    className='text-blue-600 hover:underline'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    {children}
+                  </a>
+                ),
+                strong: ({ children }) => (
+                  <strong className='font-semibold'>{children}</strong>
+                ),
+                h1: ({ children }) => (
+                  <h1 className='mb-2 text-lg font-bold'>{children}</h1>
+                ),
+                h2: ({ children }) => (
+                  <h2 className='mb-2 text-base font-bold'>{children}</h2>
+                ),
+                h3: ({ children }) => (
+                  <h3 className='mb-2 text-sm font-bold'>{children}</h3>
+                ),
+                blockquote: ({ children }) => (
+                  <blockquote className='mb-2 border-l-2 border-gray-300 pl-3 italic last:mb-0'>
+                    {children}
+                  </blockquote>
+                ),
+              }}
+            >
+              {messageText}
+            </ReactMarkdown>
+          </div>
         </div>
       </div>
       <div className='ml-11 flex gap-1'>
