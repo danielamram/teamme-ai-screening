@@ -8,9 +8,8 @@ interface SuggestionItem {
 }
 
 const suggestions: SuggestionItem[] = [
-  { text: 'What can TeamMe help me with?' },
-  { text: 'Summarize my recent activity' },
-  { text: 'Help me get started' },
+  { text: 'Get top candidates for a position' },
+  { text: 'Find candidates for a position who worked in a similar company' },
 ];
 
 const API_ENDPOINT = 'http://localhost:3000/api/chat';
