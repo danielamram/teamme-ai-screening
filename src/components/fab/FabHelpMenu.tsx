@@ -12,7 +12,7 @@ const suggestions: SuggestionItem[] = [
   { text: 'Find candidates for a position who worked in a similar company' },
 ];
 
-const API_ENDPOINT = 'http://localhost:3000/api/chat';
+const API_ENDPOINT = 'https://teamme-acquisition.vercel.app/api/chat';
 
 export default function FabHelpMenu(): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
