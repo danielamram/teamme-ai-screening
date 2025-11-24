@@ -77,7 +77,7 @@ export default function FabHelpMenu(): JSX.Element {
         style={{
           zIndex: 2147483647,
           bottom: '24px',
-          right: '24px',
+          left: '24px',
           width: '56px',
           height: '56px',
           backgroundColor: '#1e1b4b',
@@ -117,7 +117,7 @@ export default function FabHelpMenu(): JSX.Element {
           style={{
             zIndex: 2147483646,
             bottom: '96px',
-            right: '24px',
+            left: '24px',
             width: '360px',
             backgroundColor: '#FFFFFF',
             animation: 'fadeInUp 200ms ease-out',

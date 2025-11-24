@@ -1,98 +1,119 @@
-import { JSX, useState } from 'react';
-import { ArrowRight, Plus, Send } from 'lucide-react';
+import { JSX, useEffect, useState } from 'react';
+import { ExternalLink, Settings } from 'lucide-react';
+import browser from 'webextension-polyfill';
 
 export default function Popup(): JSX.Element {
-  const [inputValue, setInputValue] = useState('');
+  const [enabled, setEnabled] = useState(true);
+  const [autoAnalyze, setAutoAnalyze] = useState(true);
 
-  const prompts = [
-    'What can TeamMe AI do for recruiting?',
-    'Summarize top candidates for this position',
-    'Compare candidates by skills and experience',
-  ];
+  useEffect(() => {
+    // Load settings from storage
+    browser.storage.local
+      .get(['enabled', 'autoAnalyze'])
+      .then((result) => {
+        if (typeof result.enabled === 'boolean') setEnabled(result.enabled);
+        if (typeof result.autoAnalyze === 'boolean')
+          setAutoAnalyze(result.autoAnalyze);
+      })
+      .catch(() => {
+        // Failed to load settings, use defaults
+      });
+  }, []);
 
-  const handlePromptClick = (prompt: string) => {
-    setInputValue(prompt);
-  };
-
-  const handleSubmit = () => {
-    if (inputValue.trim()) {
-      // Handle submission
-      console.log('Submitted:', inputValue);
-      setInputValue('');
+  const handleToggle = async (key: string, value: boolean) => {
+    try {
+      await browser.storage.local.set({ [key]: value });
+      if (key === 'enabled') setEnabled(value);
+      if (key === 'autoAnalyze') setAutoAnalyze(value);
+    } catch {
+      // Failed to save setting
     }
   };
 
-  return (
-    <div id='my-ext' className='w-[380px] bg-white' data-theme='light'>
-      <div className='flex min-h-[500px] flex-col p-6'>
-        {/* Main content area */}
-        <div className='flex flex-1 flex-col items-center justify-center'>
-          {/* Headline */}
-          <h1 className='mb-32 text-center text-2xl font-normal text-indigo-500'>
-            Ask about your candidates
-          </h1>
+  const openOptions = () => {
+    browser.runtime.openOptionsPage().catch(() => {
+      // Failed to open options page
+    });
+  };
 
-          {/* Prompts */}
-          <div className='w-full space-y-3'>
-            {prompts.map((prompt) => (
-              <button
-                key={prompt}
-                type='button'
-                onClick={() => handlePromptClick(prompt)}
-                className='flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-gray-100'
-                style={{ color: '#1F2024' }}
-              >
-                <ArrowRight size={16} className='shrink-0 text-gray-400' />
-                <span>{prompt}</span>
-              </button>
-            ))}
+  return (
+    <div id='my-ext' className='w-[320px] bg-white' data-theme='light'>
+      <div className='flex flex-col p-6'>
+        {/* Header */}
+        <div className='mb-6 flex items-center justify-between'>
+          <h1 className='text-xl font-semibold text-gray-900'>TeamMe AI</h1>
+          <button
+            type='button'
+            onClick={openOptions}
+            className='rounded-lg p-2 transition-colors hover:bg-gray-100'
+            aria-label='Open settings'
+          >
+            <Settings size={20} className='text-gray-600' />
+          </button>
+        </div>
+
+        {/* Status */}
+        <div className='mb-6 rounded-lg bg-indigo-50 p-4'>
+          <div className='flex items-center gap-2'>
+            <div
+              className={`h-2 w-2 rounded-full ${enabled ? 'bg-green-500' : 'bg-gray-400'}`}
+            />
+            <span className='text-sm font-medium text-gray-900'>
+              {enabled ? 'Active' : 'Inactive'}
+            </span>
+          </div>
+          <p className='mt-1 text-xs text-gray-600'>
+            Extension is {enabled ? 'running' : 'paused'}
+          </p>
+        </div>
+
+        {/* Settings */}
+        <div className='space-y-4'>
+          <div className='flex items-center justify-between'>
+            <div>
+              <p className='text-sm font-medium text-gray-900'>
+                Enable Extension
+              </p>
+              <p className='text-xs text-gray-600'>
+                Turn on/off candidate analysis
+              </p>
+            </div>
+            <input
+              type='checkbox'
+              className='toggle toggle-primary'
+              checked={enabled}
+              onChange={(e) => handleToggle('enabled', e.target.checked)}
+            />
+          </div>
+
+          <div className='flex items-center justify-between'>
+            <div>
+              <p className='text-sm font-medium text-gray-900'>Auto-Analyze</p>
+              <p className='text-xs text-gray-600'>
+                Automatically analyze candidates
+              </p>
+            </div>
+            <input
+              type='checkbox'
+              className='toggle toggle-primary'
+              checked={autoAnalyze}
+              disabled={!enabled}
+              onChange={(e) => handleToggle('autoAnalyze', e.target.checked)}
+            />
           </div>
         </div>
 
-        {/* Input area */}
-        <div className='mt-6'>
-          <div
-            className='rounded-2xl border px-4 py-3'
-            style={{ borderColor: '#E4E6E8' }}
+        {/* Footer */}
+        <div className='mt-6 border-t pt-4'>
+          <a
+            href='https://teamme.ai'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='flex items-center justify-center gap-2 text-xs text-indigo-600 transition-colors hover:text-indigo-800'
           >
-            <input
-              type='text'
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              placeholder='Try @candidate name'
-              className='w-full bg-transparent text-sm outline-none'
-              style={{ color: '#1F2024' }}
-            />
-            <div className='mt-2 flex items-center justify-between'>
-              <button
-                type='button'
-                className='rounded-full p-1 transition-colors hover:bg-gray-100'
-              >
-                <Plus size={20} className='text-gray-500' />
-              </button>
-              <button
-                type='button'
-                onClick={handleSubmit}
-                disabled={!inputValue.trim()}
-                className={`rounded-full p-2 ${
-                  inputValue.trim()
-                    ? 'bg-indigo-500 text-white'
-                    : 'bg-gray-100 text-gray-400'
-                }`}
-              >
-                <Send size={16} />
-              </button>
-            </div>
-          </div>
-
-          {/* Disclaimer */}
-          <p className='mt-3 text-center text-xs text-gray-500'>
-            TeamMe AI can make mistakes, so double-check responses.{' '}
-            <a href='#' className='underline'>
-              Learn more
-            </a>
-          </p>
+            <span>Learn more about TeamMe AI</span>
+            <ExternalLink size={12} />
+          </a>
         </div>
       </div>
     </div>
