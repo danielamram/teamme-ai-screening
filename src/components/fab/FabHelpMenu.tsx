@@ -1,14 +1,14 @@
 import { JSX, useState } from 'react';
 import { ChevronDown, MessageCircle } from 'lucide-react';
 
-import ChatInterface from './ChatInterface';
+import ChatInterface, { Message } from './ChatInterface';
 
 interface SuggestionItem {
   text: string;
 }
 
 const suggestions: SuggestionItem[] = [
-  { text: 'What can TeamMe help me with' },
+  { text: 'What can TeamMe help me with?' },
   { text: 'Summarize my recent activity' },
   { text: 'Help me get started' },
 ];
@@ -16,7 +16,8 @@ const suggestions: SuggestionItem[] = [
 export default function FabHelpMenu(): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [messageCount] = useState(1);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -24,13 +25,38 @@ export default function FabHelpMenu(): JSX.Element {
     setInputValue(text);
   };
 
+  const generateId = () => Math.random().toString(36).substring(2, 9);
+
   const handleSubmit = () => {
-    if (inputValue.trim()) {
-      // Handle message submission
-      // TODO: Implement message submission logic
+    if (inputValue.trim() && !isLoading) {
+      const userMessage: Message = {
+        id: generateId(),
+        role: 'user',
+        content: inputValue.trim(),
+      };
+
+      setMessages((prev) => [...prev, userMessage]);
       setInputValue('');
+      setIsLoading(true);
+
+      // Simulate AI response
+      setTimeout(() => {
+        const assistantMessage: Message = {
+          id: generateId(),
+          role: 'assistant',
+          content: `Thanks for your message! I'm here to help you with TeamMe. You asked: "${userMessage.content}"\n\nThis is a demo response. In production, this would connect to an AI service to provide helpful answers about your work, team activities, and more.`,
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+        setIsLoading(false);
+      }, 1500);
     }
   };
+
+  const handleStop = () => {
+    setIsLoading(false);
+  };
+
+  const unreadCount = messages.filter((m) => m.role === 'assistant').length || (messages.length === 0 ? 1 : 0);
 
   return (
     <>
@@ -74,7 +100,7 @@ export default function FabHelpMenu(): JSX.Element {
         ) : (
           <>
             <MessageCircle size={24} color='#FFFFFF' fill='#FFFFFF' />
-            {messageCount > 0 && (
+            {unreadCount > 0 && (
               <span
                 className='absolute flex items-center justify-center rounded-full text-xs font-semibold'
                 style={{
@@ -86,7 +112,7 @@ export default function FabHelpMenu(): JSX.Element {
                   color: '#FFFFFF',
                 }}
               >
-                {messageCount}
+                {unreadCount}
               </span>
             )}
           </>
@@ -102,6 +128,9 @@ export default function FabHelpMenu(): JSX.Element {
         onSubmit={handleSubmit}
         onSuggestionClick={handleSuggestionClick}
         suggestions={suggestions}
+        messages={messages}
+        isLoading={isLoading}
+        onStop={handleStop}
       />
 
       {/* Animation keyframes */}
