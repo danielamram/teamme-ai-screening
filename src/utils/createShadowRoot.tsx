@@ -7,10 +7,17 @@ import { createRoot } from 'react-dom/client';
  */
 export default function createShadowRoot(styles: string) {
   const host = document.createElement('div');
+  // Ensure host takes full width and height
+  host.style.width = '100%';
+  host.style.height = '100%';
+  host.style.display = 'block';
+
   const shadow = host.attachShadow({ mode: 'open' });
 
   // Create an internal mount node to avoid Xray wrapper issues in Firefox
   const mount = document.createElement('div');
+  mount.style.width = '100%';
+  mount.style.height = '100%';
   shadow.appendChild(mount);
 
   // Apply styles: prefer constructable stylesheets, fallback safely

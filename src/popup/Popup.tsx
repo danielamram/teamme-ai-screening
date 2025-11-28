@@ -1,19 +1,25 @@
 import { JSX, useEffect, useState } from 'react';
-import { ExternalLink, Settings } from 'lucide-react';
+import { ExternalLink, Eye, EyeOff, Settings } from 'lucide-react';
 import browser from 'webextension-polyfill';
 
 export default function Popup(): JSX.Element {
   const [enabled, setEnabled] = useState(true);
   const [autoAnalyze, setAutoAnalyze] = useState(true);
+  const [apiKey, setApiKey] = useState('');
+  const [showApiKey, setShowApiKey] = useState(false);
 
   useEffect(() => {
     // Load settings from storage
     browser.storage.local
-      .get(['enabled', 'autoAnalyze'])
+      .get(['enabled', 'autoAnalyze', 'apiSettings'])
       .then((result) => {
         if (typeof result.enabled === 'boolean') setEnabled(result.enabled);
         if (typeof result.autoAnalyze === 'boolean')
           setAutoAnalyze(result.autoAnalyze);
+        if (result.apiSettings && typeof result.apiSettings === 'object') {
+          const settings = result.apiSettings as { apiKey?: string };
+          setApiKey(settings.apiKey || '');
+        }
       })
       .catch(() => {
         // Failed to load settings, use defaults
@@ -30,6 +36,22 @@ export default function Popup(): JSX.Element {
     }
   };
 
+  const handleApiKeyChange = async (value: string) => {
+    setApiKey(value);
+    try {
+      const result = await browser.storage.local.get(['apiSettings']);
+      const currentApiSettings = result.apiSettings || {};
+      await browser.storage.local.set({
+        apiSettings: {
+          ...currentApiSettings,
+          apiKey: value,
+        },
+      });
+    } catch {
+      // Failed to save API key
+    }
+  };
+
   const openOptions = () => {
     browser.runtime.openOptionsPage().catch(() => {
       // Failed to open options page
@@ -37,7 +59,12 @@ export default function Popup(): JSX.Element {
   };
 
   return (
-    <div id='my-ext' className='w-[320px] bg-white' data-theme='light'>
+    <div
+      id='my-ext'
+      className='bg-white'
+      data-theme='light'
+      style={{ width: '420px', minWidth: '420px' }}
+    >
       <div className='flex flex-col p-6'>
         {/* Header */}
         <div className='mb-6 flex items-center justify-between'>
@@ -100,6 +127,37 @@ export default function Popup(): JSX.Element {
               disabled={!enabled}
               onChange={(e) => handleToggle('autoAnalyze', e.target.checked)}
             />
+          </div>
+
+          <div className='border-t pt-4'>
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+            <label
+              htmlFor='apiKey'
+              className='mb-2 block text-sm font-medium text-gray-900'
+            >
+              API Key
+            </label>
+            <div className='relative'>
+              <input
+                id='apiKey'
+                type={showApiKey ? 'text' : 'password'}
+                className='input-bordered input w-full pr-10 text-sm'
+                placeholder='Enter your API key'
+                value={apiKey}
+                onChange={(e) => handleApiKeyChange(e.target.value)}
+              />
+              <button
+                type='button'
+                className='absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900'
+                onClick={() => setShowApiKey(!showApiKey)}
+                aria-label={showApiKey ? 'Hide API key' : 'Show API key'}
+              >
+                {showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            <p className='mt-1 text-xs text-gray-600'>
+              Optional authentication key
+            </p>
           </div>
         </div>
 

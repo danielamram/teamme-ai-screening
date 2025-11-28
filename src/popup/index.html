@@ -1,12 +1,32 @@
 <!doctype html>
-<html>
+<html style="width: 420px; min-width: 420px; margin: 0; padding: 0">
   <head>
     <meta charset="UTF-8" />
     <title>my ext popup page</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 420px !important;
+        min-width: 420px !important;
+        height: auto;
+        min-height: 400px;
+        overflow-x: hidden;
+      }
+      #my-ext-popup-page {
+        width: 420px !important;
+        min-width: 420px !important;
+        height: 100%;
+      }
+    </style>
   </head>
 
-  <body>
-    <div id="my-ext-popup-page"></div>
+  <body style="width: 420px; min-width: 420px; margin: 0; padding: 0">
+    <div id="my-ext-popup-page" style="width: 420px; min-width: 420px"></div>
     <script type="module" src="./index.tsx"></script>
   </body>
 </html>
