@@ -25,7 +25,8 @@ module.exports = {
     '@typescript-eslint/no-shadow': 'error',
     'import/no-extraneous-dependencies': 'off',
     'react/react-in-jsx-scope': 'off',
-    'import/prefer-default-export': 'off',
+    'react/require-default-props': 'off',
+    'prefer-default-export': 'off',
   },
   globals: {
     chrome: 'readonly',

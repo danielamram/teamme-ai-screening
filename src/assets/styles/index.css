@@ -155,6 +155,80 @@
   }
 }
 
+/* MorphingBlob animations */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.6;
+  }
+}
+
+@keyframes wobble {
+  0%,
+  100% {
+    d: path(
+      'M100,25 C130,20 155,35 170,60 C185,85 185,115 170,140 C155,165 130,180 100,180 C70,180 45,165 30,140 C15,115 15,85 30,60 C45,35 70,20 100,25'
+    );
+  }
+  25% {
+    d: path(
+      'M105,20 C138,22 165,42 178,70 C191,98 188,130 170,155 C152,180 122,188 92,182 C62,176 38,158 25,128 C12,98 18,62 40,40 C62,18 72,18 105,20'
+    );
+  }
+  50% {
+    d: path(
+      'M95,22 C125,15 158,30 175,58 C192,86 195,120 180,150 C165,180 135,190 102,188 C69,186 42,170 28,142 C14,114 14,78 32,50 C50,22 65,29 95,22'
+    );
+  }
+  75% {
+    d: path(
+      'M102,18 C135,15 162,32 178,62 C194,92 192,128 175,155 C158,182 128,192 95,188 C62,184 38,165 24,135 C10,105 15,68 35,42 C55,16 69,21 102,18'
+    );
+  }
+}
+
+@keyframes wobbleInner {
+  0%,
+  100% {
+    d: path(
+      'M100,45 C120,42 138,52 150,70 C162,88 162,108 150,126 C138,144 120,154 100,154 C80,154 62,144 50,126 C38,108 38,88 50,70 C62,52 80,42 100,45'
+    );
+  }
+  25% {
+    d: path(
+      'M104,42 C126,44 146,58 156,78 C166,98 164,120 152,138 C140,156 118,164 96,160 C74,156 56,142 48,120 C40,98 44,72 60,55 C76,38 82,40 104,42'
+    );
+  }
+  50% {
+    d: path(
+      'M96,43 C116,38 140,50 152,70 C164,90 166,114 154,135 C142,156 120,164 98,162 C76,160 56,148 46,128 C36,108 38,82 52,62 C66,42 76,48 96,43'
+    );
+  }
+  75% {
+    d: path(
+      'M101,40 C124,38 145,50 156,72 C167,94 165,120 152,140 C139,160 116,166 94,162 C72,158 52,144 44,120 C36,96 40,68 55,50 C70,32 78,42 101,40'
+    );
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-4px) rotate(1.5deg);
+  }
+  66% {
+    transform: translateY(2px) rotate(-1.5deg);
+  }
+}
+
 /* Custom scrollbar styles for sidebar */
 #my-ext ::-webkit-scrollbar {
   width: 8px;
@@ -210,4 +284,27 @@
 
 .duration-300 {
   animation-duration: 300ms;
+}
+
+/* MorphingBlob animation classes */
+.blob-glow-outer {
+  animation: breathe 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.blob-glow-inner {
+  animation: breathe 4s cubic-bezier(0.4, 0, 0.6, 1) infinite 1s;
+}
+
+.blob-main {
+  animation: wobble 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.blob-inner {
+  animation: wobbleInner 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation-delay: -0.5s;
+}
+
+.float-container {
+  transform-origin: center;
+  animation: float 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
