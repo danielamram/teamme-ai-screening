@@ -1,6 +1,7 @@
 import React, { JSX, useEffect, useRef } from 'react';
-import { ArrowUp, Square } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
+import SendButton from './SendButton';
 import { CHAT_COLORS } from './types';
 
 interface ChatInputProps {
@@ -59,78 +60,49 @@ export default function ChatInput({
           backgroundColor: '#ffffff',
         }}
       >
-        <textarea
-          ref={textareaRef}
-          value={input}
-          onChange={(event) => onInputChange(event.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder='Ask about candidates or search by skills...'
-          rows={1}
-          className='w-full resize-none bg-transparent px-4 pb-2 pt-3 text-sm outline-none placeholder:text-gray-400'
-          style={{
-            border: 'none',
-            color: CHAT_COLORS.text.primary,
-            minHeight: '44px',
-            maxHeight: '200px',
-          }}
-        />
-        <div className='flex items-center justify-end px-3 pb-2'>
-          {isStreaming ? (
+        {/* Search Bar */}
+        <div className='flex w-full max-w-sm flex-row items-center justify-center space-x-2'>
+          <div
+            className='flex w-full items-center gap-3 rounded-full border px-5 py-3 transition-all hover:shadow-md'
+            style={{
+              borderColor: CHAT_COLORS.borderLight,
+              backgroundColor: '#F8F9FA',
+            }}
+          >
             <button
               type='button'
-              onClick={onStop}
-              className='group rounded-xl p-2.5 shadow-sm transition-all hover:shadow-md'
-              style={{
-                backgroundColor: CHAT_COLORS.text.primary,
-              }}
-              aria-label='Stop generating'
+              className='flex-shrink-0 transition-colors hover:opacity-70'
+              aria-label='Add'
             >
-              <Square
-                size={16}
-                color='#FFFFFF'
-                fill='#FFFFFF'
-                className='transition-transform group-hover:scale-110'
-              />
+              <Plus size={20} color='#9CA3AF' strokeWidth={2} />
             </button>
-          ) : (
-            <button
-              type='button'
-              onClick={onSend}
-              className='group rounded-xl p-2.5 shadow-sm transition-all hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50'
+
+            <textarea
+              name='chat-input'
+              id='chat-input'
+              ref={textareaRef}
+              value={input}
+              onChange={(event) => onInputChange(event.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder='Ask Anna anything...'
+              rows={1}
+              className='w-full resize-none bg-transparent pb-2 pr-4 pt-3 text-sm outline-none placeholder:text-gray-400 focus:outline-none'
               style={{
-                backgroundColor:
-                  input.trim() && !isStreaming
-                    ? CHAT_COLORS.primary
-                    : CHAT_COLORS.borderLight,
+                border: 'none',
+                color: CHAT_COLORS.text.primary,
+                minHeight: '44px',
+                maxHeight: '200px',
               }}
-              aria-label='Send message'
-              disabled={!input.trim() || isStreaming}
-            >
-              <ArrowUp
-                size={16}
-                color={
-                  input.trim() && !isStreaming
-                    ? '#FFFFFF'
-                    : CHAT_COLORS.text.muted
-                }
-                className='transition-transform group-hover:scale-110 group-active:scale-95'
-              />
-            </button>
-          )}
+            />
+          </div>
+          <SendButton
+            input={input}
+            isStreaming={isStreaming}
+            onSend={onSend}
+            onStop={onStop}
+          />
         </div>
       </div>
-      <p
-        className='mt-2 px-1 text-center text-[11px]'
-        style={{ color: CHAT_COLORS.text.muted }}
-      >
-        Press{' '}
-        <kbd className='rounded bg-gray-100 px-1 py-0.5 text-[10px]'>Enter</kbd>{' '}
-        to send,{' '}
-        <kbd className='rounded bg-gray-100 px-1 py-0.5 text-[10px]'>
-          Shift + Enter
-        </kbd>{' '}
-        for new line
-      </p>
     </div>
   );
 }
