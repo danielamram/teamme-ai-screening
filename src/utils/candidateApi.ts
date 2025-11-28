@@ -1,6 +1,8 @@
 import type { APICandidateResponse, Candidate } from '@/types/candidate';
 
-const API_BASE_URL = 'https://teamme-acquisition.vercel.app/api/candidates';
+import { API_CONFIG } from '@/constants/config';
+
+const API_BASE_URL = API_CONFIG.candidate.baseUrl;
 
 /**
  * Fetch candidate data from the API
@@ -11,11 +13,18 @@ export async function fetchCandidateData(
   const url = `${API_BASE_URL}/comeet/${candidateId}`;
 
   try {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    // Add API key if configured
+    if (API_CONFIG.apiKey) {
+      headers.Authorization = `Bearer ${API_CONFIG.apiKey}`;
+    }
+
     const response = await fetch(url, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
     });
 
     if (!response.ok) {
@@ -27,6 +36,7 @@ export async function fetchCandidateData(
     const data: APICandidateResponse = await response.json();
     return data;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Error fetching candidate data:', error);
     throw error;
   }

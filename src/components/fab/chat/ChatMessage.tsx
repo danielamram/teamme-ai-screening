@@ -55,10 +55,10 @@ export default function ChatMessage({
           className='px-1 text-xs'
           style={{ color: CHAT_COLORS.text.muted }}
         >
-          {new Date(message.createdAt || Date.now()).toLocaleTimeString(
-            'en-US',
-            { hour: '2-digit', minute: '2-digit' }
-          )}
+          {new Date().toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
         </span>
       </div>
     );
@@ -103,10 +103,10 @@ export default function ChatMessage({
       </div>
       <div className='ml-11 flex items-center gap-2'>
         <span className='text-xs' style={{ color: CHAT_COLORS.text.muted }}>
-          {new Date(message.createdAt || Date.now()).toLocaleTimeString(
-            'en-US',
-            { hour: '2-digit', minute: '2-digit' }
-          )}
+          {new Date().toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
         </span>
         {messageText && (
           <button
