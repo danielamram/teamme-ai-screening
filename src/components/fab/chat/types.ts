@@ -1,5 +1,6 @@
 export interface SuggestionItem {
   text: string;
+  icon: 'search' | 'building' | 'trophy' | 'clock' | 'users' | 'target';
 }
 
 export interface ChatInterfaceProps {
@@ -32,5 +33,7 @@ export const CHAT_COLORS = {
     text: '#0f172a',
   },
   success: '#10b981',
+  warning: '#f59e0b',
+  error: '#ef4444',
   hover: '#f1f5f9',
 } as const;

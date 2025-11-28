@@ -36,7 +36,13 @@ export default function ChatInput({
   };
 
   return (
-    <div className='px-5 py-4' style={{ backgroundColor: '#ffffff' }}>
+    <div
+      className='border-t px-5 py-4'
+      style={{
+        backgroundColor: '#ffffff',
+        borderColor: CHAT_COLORS.borderLight,
+      }}
+    >
       <div
         className='flex flex-col rounded-2xl border-2 shadow-md transition-all focus-within:border-indigo-400 focus-within:shadow-lg'
         style={{
@@ -49,7 +55,7 @@ export default function ChatInput({
           value={input}
           onChange={(event) => onInputChange(event.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder='Type your message...'
+          placeholder='Ask about candidates or search by skills...'
           rows={1}
           className='w-full resize-none bg-transparent px-4 pb-2 pt-3 text-sm outline-none placeholder:text-gray-400'
           style={{
@@ -105,13 +111,13 @@ export default function ChatInput({
         </div>
       </div>
       <p
-        className='mt-2 px-1 text-center text-xs'
+        className='mt-2 px-1 text-center text-[11px]'
         style={{ color: CHAT_COLORS.text.muted }}
       >
         Press{' '}
-        <kbd className='rounded bg-gray-100 px-1.5 py-0.5 text-xs'>Enter</kbd>{' '}
+        <kbd className='rounded bg-gray-100 px-1 py-0.5 text-[10px]'>Enter</kbd>{' '}
         to send,{' '}
-        <kbd className='rounded bg-gray-100 px-1.5 py-0.5 text-xs'>
+        <kbd className='rounded bg-gray-100 px-1 py-0.5 text-[10px]'>
           Shift + Enter
         </kbd>{' '}
         for new line

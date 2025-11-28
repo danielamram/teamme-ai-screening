@@ -24,19 +24,28 @@ export default function ChatInterface({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState('');
 
-  const { messages, sendMessage, status, stop } = useChat<UIMessage>({
-    transport: new DefaultChatTransport({
-      api: apiEndpoint,
-      body: {
-        positionId: POSITION_ID,
+  const { messages, sendMessage, status, stop, setMessages } =
+    useChat<UIMessage>({
+      transport: new DefaultChatTransport({
+        api: apiEndpoint,
+        body: {
+          positionId: POSITION_ID,
+        },
+      }),
+      onError: (error: Error) => {
+        // eslint-disable-next-line no-console
+        console.error('Chat error:', error);
       },
-    }),
-    onError: (error: Error) => {
-      // eslint-disable-next-line no-console
-      console.error('Chat error:', error);
-    },
-  });
+    });
   const isStreaming = status === 'submitted' || status === 'streaming';
+
+  const handleReset = useCallback(() => {
+    if (isStreaming) {
+      stop();
+    }
+    setMessages([]);
+    setInput('');
+  }, [isStreaming, stop, setMessages]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -88,7 +97,12 @@ export default function ChatInterface({
         animation: 'fadeInUp 250ms cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
-      <ChatHeader onClose={onClose} />
+      <ChatHeader
+        onClose={onClose}
+        onReset={handleReset}
+        isStreaming={isStreaming}
+        hasMessages={hasMessages}
+      />
 
       {/* Messages Area or Suggested Actions */}
       {hasMessages ? (
