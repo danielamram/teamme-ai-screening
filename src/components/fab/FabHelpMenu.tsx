@@ -1,8 +1,10 @@
 import { JSX, useState } from 'react';
-import { ChevronDown, MessageCircle } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
+import TeamMeIcon from '@/components/icons/TeamMeIcon';
 import { API_CONFIG } from '@/constants/config';
 
+import { CHAT_COLORS } from './chat';
 import ChatInterface from './ChatInterface';
 
 interface SuggestionItem {
@@ -46,24 +48,26 @@ export default function FabHelpMenu(): JSX.Element {
       <button
         type='button'
         onClick={toggleMenu}
-        className='fixed flex items-center justify-center rounded-full shadow-lg transition-all duration-200 hover:shadow-xl'
+        className='fixed flex items-center justify-center rounded-full shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-xl active:scale-95'
         style={{
           zIndex: 2147483647,
-          bottom: '24px',
-          left: '24px',
+          bottom: '20px',
+          left: '20px',
           width: '56px',
           height: '56px',
-          backgroundColor: '#1e1b4b',
+          background: `linear-gradient(135deg, ${CHAT_COLORS.primary} 0%, ${CHAT_COLORS.primaryDark} 100%)`,
           border: 'none',
           cursor: 'pointer',
         }}
         aria-label={isOpen ? 'Close help menu' : 'Open help menu'}
       >
-        {isOpen ? (
-          <ChevronDown size={24} color='#FFFFFF' />
-        ) : (
-          <MessageCircle size={24} color='#FFFFFF' fill='#FFFFFF' />
-        )}
+        <div className='transition-transform duration-200'>
+          {isOpen ? (
+            <ChevronDown size={24} color='#FFFFFF' />
+          ) : (
+            <TeamMeIcon size={32} color='#FFFFFF' />
+          )}
+        </div>
       </button>
 
       {/* Chat Interface */}

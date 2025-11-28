@@ -144,14 +144,22 @@ function CandidateCard({ candidate }: { candidate: Candidate }): JSX.Element {
           <div className='min-w-0 flex-1'>
             <h4
               className='text-base font-semibold leading-tight'
-              style={{ color: CHAT_COLORS.text.primary }}
+              style={{
+                color: CHAT_COLORS.text.primary,
+                userSelect: 'text',
+                cursor: 'text',
+              }}
             >
               {candidate.name}
             </h4>
             {candidate.location && (
               <div
                 className='mt-1.5 flex items-center gap-1.5 text-sm font-medium'
-                style={{ color: CHAT_COLORS.text.secondary }}
+                style={{
+                  color: CHAT_COLORS.text.secondary,
+                  userSelect: 'text',
+                  cursor: 'text',
+                }}
               >
                 <MapPin size={14} style={{ color: CHAT_COLORS.primary }} />
                 {candidate.location}
@@ -197,7 +205,11 @@ function CandidateCard({ candidate }: { candidate: Candidate }): JSX.Element {
             </div>
             <p
               className='text-sm leading-relaxed'
-              style={{ color: CHAT_COLORS.text.secondary }}
+              style={{
+                color: CHAT_COLORS.text.secondary,
+                userSelect: 'text',
+                cursor: 'text',
+              }}
             >
               {displaySummary}
             </p>
@@ -314,7 +326,13 @@ export default function ChatMessage({
             backgroundColor: CHAT_COLORS.primary,
           }}
         >
-          <p className='whitespace-pre-wrap text-sm leading-relaxed text-white'>
+          <p
+            className='whitespace-pre-wrap text-sm leading-relaxed text-white'
+            style={{
+              userSelect: 'text',
+              cursor: 'text',
+            }}
+          >
             {messageText}
           </p>
         </div>
@@ -346,7 +364,11 @@ export default function ChatMessage({
           {messageText && (
             <div
               className='prose-sm prose max-w-none text-sm leading-relaxed'
-              style={{ color: CHAT_COLORS.text.primary }}
+              style={{
+                color: CHAT_COLORS.text.primary,
+                userSelect: 'text',
+                cursor: 'text',
+              }}
             >
               <ReactMarkdown components={MARKDOWN_COMPONENTS}>
                 {messageText}
@@ -467,6 +489,8 @@ export default function ChatMessage({
                             style={{
                               backgroundColor: CHAT_COLORS.surface,
                               color: CHAT_COLORS.text.primary,
+                              userSelect: 'text',
+                              cursor: 'text',
                             }}
                           >
                             {JSON.stringify(typedPart.input, null, 2)}
@@ -498,6 +522,8 @@ export default function ChatMessage({
                               style={{
                                 backgroundColor: CHAT_COLORS.surface,
                                 color: CHAT_COLORS.text.primary,
+                                userSelect: 'text',
+                                cursor: 'text',
                               }}
                             >
                               {JSON.stringify(typedPart.output, null, 2)}
@@ -515,6 +541,8 @@ export default function ChatMessage({
                           style={{
                             backgroundColor: '#fee',
                             color: CHAT_COLORS.error,
+                            userSelect: 'text',
+                            cursor: 'text',
                           }}
                         >
                           {typedPart.errorText}
@@ -561,14 +589,22 @@ export default function ChatMessage({
                   >
                     <p
                       className='text-sm font-medium leading-relaxed'
-                      style={{ color: CHAT_COLORS.text.primary }}
+                      style={{
+                        color: CHAT_COLORS.text.primary,
+                        userSelect: 'text',
+                        cursor: 'text',
+                      }}
                     >
                       {q.question}
                     </p>
                     {q.description && (
                       <p
                         className='mt-1 text-xs'
-                        style={{ color: CHAT_COLORS.text.muted }}
+                        style={{
+                          color: CHAT_COLORS.text.muted,
+                          userSelect: 'text',
+                          cursor: 'text',
+                        }}
                       >
                         {q.description}
                       </p>

@@ -6,6 +6,7 @@ import { CHAT_COLORS } from './types';
 interface ChatInputProps {
   input: string;
   isStreaming: boolean;
+  isOpen: boolean;
   onInputChange: (value: string) => void;
   onSend: () => void;
   onStop: () => void;
@@ -14,11 +15,19 @@ interface ChatInputProps {
 export default function ChatInput({
   input,
   isStreaming,
+  isOpen,
   onInputChange,
   onSend,
   onStop,
 }: ChatInputProps): JSX.Element {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-focus when chat is opened
+  useEffect(() => {
+    if (isOpen && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [isOpen]);
 
   // Auto-resize textarea
   useEffect(() => {

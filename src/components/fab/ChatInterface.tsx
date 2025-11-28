@@ -90,7 +90,7 @@ export default function ChatInterface({
       style={{
         zIndex: 2147483646,
         bottom: '96px',
-        left: '24px',
+        left: '20px',
         width: '420px',
         height: '640px',
         backgroundColor: CHAT_COLORS.background,
@@ -132,6 +132,7 @@ export default function ChatInterface({
       <ChatInput
         input={input}
         isStreaming={isStreaming}
+        isOpen={isOpen}
         onInputChange={setInput}
         onSend={sendCurrentMessage}
         onStop={stop}
