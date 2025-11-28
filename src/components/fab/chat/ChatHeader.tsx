@@ -19,7 +19,7 @@ export default function ChatHeader({
   const getStatusText = () => {
     if (isStreaming) return 'Searching candidate pool...';
     if (hasMessages) return 'Ready to help';
-    return 'Search, filter, and analyze candidates';
+    return 'ATS AI Assistant';
   };
 
   return (
@@ -62,9 +62,7 @@ export default function ChatHeader({
           )}
         </div>
         <div>
-          <span className='block text-sm font-bold text-white'>
-            Screening AI Assistant
-          </span>
+          <span className='block text-sm font-bold text-white'>Anna</span>
           <span className='block text-xs text-white/80'>{getStatusText()}</span>
         </div>
       </div>
