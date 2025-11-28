@@ -3,6 +3,7 @@ import { ChevronDown } from 'lucide-react';
 
 import TeamMeIcon from '@/components/icons/TeamMeIcon';
 import { API_CONFIG } from '@/constants/config';
+import { useFadeIn } from '@/hooks/useAnimations';
 
 import { CHAT_COLORS } from './chat';
 import ChatInterface from './ChatInterface';
@@ -21,6 +22,7 @@ const suggestions: SuggestionItem[] = [
 
 export default function FabHelpMenu(): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
+  const isVisible = useFadeIn(300);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -58,6 +60,11 @@ export default function FabHelpMenu(): JSX.Element {
           background: `linear-gradient(135deg, ${CHAT_COLORS.primary} 0%, ${CHAT_COLORS.primaryDark} 100%)`,
           border: 'none',
           cursor: 'pointer',
+          opacity: isVisible ? 1 : 0,
+          transform: isVisible ? 'scale(1)' : 'scale(0.8)',
+          animation: isVisible
+            ? 'fabEnter 400ms cubic-bezier(0.16, 1, 0.3, 1)'
+            : 'none',
         }}
         aria-label={isOpen ? 'Close help menu' : 'Open help menu'}
       >
@@ -88,6 +95,17 @@ export default function FabHelpMenu(): JSX.Element {
           to {
             opacity: 1;
             transform: translateY(0);
+          }
+        }
+        
+        @keyframes fabEnter {
+          from {
+            opacity: 0;
+            transform: scale(0.6) translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
           }
         }
       `}</style>

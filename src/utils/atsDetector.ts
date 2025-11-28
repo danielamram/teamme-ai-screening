@@ -61,8 +61,8 @@ export const ATS_PLATFORMS: ATSPlatform[] = [
   },
   {
     name: 'Comeet',
-    domains: ['comeet.co'],
-    patterns: [/comeet\.co/i],
+    domains: ['app.comeet.co'],
+    patterns: [/app\.comeet\.co/i],
   },
 ];
 
