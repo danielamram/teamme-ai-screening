@@ -10,4 +10,4 @@ export { MARKDOWN_COMPONENTS } from './markdownComponents';
 export { default as SearchCandidatesResult } from './SearchCandidatesResult';
 export { default as ToolCallDisplay } from './ToolCallDisplay';
 export { CHAT_COLORS } from './types';
-export type { ChatInterfaceProps, SuggestionItem } from './types';
+export type { SuggestionItem } from './types';

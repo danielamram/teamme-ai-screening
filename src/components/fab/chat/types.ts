@@ -3,13 +3,6 @@ export interface SuggestionItem {
   icon: 'search' | 'building' | 'trophy' | 'clock' | 'users' | 'target';
 }
 
-export interface ChatInterfaceProps {
-  isOpen: boolean;
-  onClose: () => void;
-  suggestions: SuggestionItem[];
-  apiEndpoint: string;
-}
-
 // Color palette
 export const CHAT_COLORS = {
   primary: '#6366f1', // Indigo

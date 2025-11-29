@@ -1,6 +1,5 @@
 import { JSX, useCallback, useEffect, useRef, useState } from 'react';
 import type { UIMessage } from 'ai';
-import type { ChatInterfaceProps } from './chat';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 
@@ -11,7 +10,15 @@ import {
   ChatLoadingIndicator,
   ChatMessage,
   ChatSuggestions,
+  SuggestionItem,
 } from './chat';
+
+export interface ChatInterfaceProps {
+  isOpen: boolean;
+  onClose: () => void;
+  suggestions: SuggestionItem[];
+  apiEndpoint: string;
+}
 
 const POSITION_ID = '1D.06B';
 
