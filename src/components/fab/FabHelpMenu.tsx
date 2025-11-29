@@ -38,7 +38,7 @@ export default function FabHelpMenu(): JSX.Element {
       <button
         type='button'
         onClick={toggleMenu}
-        className='fixed flex items-center justify-center rounded-full shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-xl active:scale-95'
+        className='group fixed flex items-center justify-center rounded-full shadow-lg transition-all duration-200 hover:scale-110 hover:shadow-xl active:scale-95'
         style={{
           zIndex: 2147483647,
           bottom: '20px',
@@ -56,8 +56,12 @@ export default function FabHelpMenu(): JSX.Element {
         }}
         aria-label={isOpen ? 'Close help menu' : 'Open help menu'}
       >
-        <div className='transition-transform duration-200'>
-          {isOpen ? <ChevronDown size={24} color='#FFFFFF' /> : <AtsAiLogo />}
+        <div className='transition-transform duration-200 group-hover:rotate-[-45deg] group-hover:scale-110'>
+          {isOpen ? (
+            <ChevronDown size={24} color='#FFFFFF' />
+          ) : (
+            <AtsAiLogo className='rotate-45' size={24} />
+          )}
         </div>
       </button>
 

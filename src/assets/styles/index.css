@@ -232,6 +232,37 @@
   animation-duration: 300ms;
 }
 
+/* AtsAiLogo animation classes */
+/* Custom Utilities for the specific logo requirements */
+.atn-logo-shape {
+  transform: rotate(-45deg);
+  border-radius: 50% 50% 50% 0;
+}
+
+.atn-conic-gradient {
+  background: conic-gradient(
+    from 225deg,
+    /* #c7d2fe 0%, */ #fff 0%,
+    #a5b4fc 40%,
+    #818cf8 90%,
+    #c7d2fe 100%
+  );
+}
+
+.atn-hole-mask {
+  -webkit-mask-image: radial-gradient(
+    circle at center,
+    transparent 28%,
+    black 28.5%
+  );
+  mask-image: radial-gradient(circle at center, transparent 28%, black 28.5%);
+}
+
+.atn-fold-effect {
+  backdrop-filter: blur(2px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+}
+
 /* MorphingBlob animation classes */
 .blob-glow-outer {
   animation: breathe 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
