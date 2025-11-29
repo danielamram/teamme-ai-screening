@@ -12,6 +12,7 @@ interface ChatMessageProps {
   message: UIMessage;
   onQuestionClick?: (question: string) => void;
   onViewCandidate?: (candidateId: string) => void;
+  onSuggestionClick?: (action: string, description: string) => void;
 }
 
 const extractMessageText = (message: UIMessage): string =>
@@ -36,6 +37,7 @@ export default function ChatMessage({
   message,
   onQuestionClick,
   onViewCandidate,
+  onSuggestionClick,
 }: ChatMessageProps): JSX.Element {
   const [copied, setCopied] = useState(false);
   const messageText = extractMessageText(message);
@@ -113,7 +115,11 @@ export default function ChatMessage({
           )}
 
           {/* Tool Calls (if any) */}
-          <ToolCallDisplay message={message} onViewCandidate={onViewCandidate} />
+          <ToolCallDisplay
+            message={message}
+            onViewCandidate={onViewCandidate}
+            onSuggestionClick={onSuggestionClick}
+          />
 
           {/* Followup Questions */}
           {onQuestionClick && (

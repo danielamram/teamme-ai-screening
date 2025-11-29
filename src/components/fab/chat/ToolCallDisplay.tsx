@@ -5,11 +5,15 @@ import { JSX } from 'react';
 import SearchCandidatesResult, {
   type SearchCandidatesOutput,
 } from './SearchCandidatesResult';
+import SuggestNextActionsResult, {
+  type SuggestNextActionsOutput,
+} from './SuggestNextActionsResult';
 import { CHAT_COLORS } from './types';
 
 interface ToolCallDisplayProps {
   message: UIMessage;
   onViewCandidate?: (candidateId: string) => void;
+  onSuggestionClick?: (action: string, description: string) => void;
 }
 
 const hasToolParts = (message: UIMessage): boolean =>
@@ -17,9 +21,49 @@ const hasToolParts = (message: UIMessage): boolean =>
     (part) => part.type !== 'text' && part.type.startsWith('tool-')
   );
 
+const renderToolOutput = (
+  toolName: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  output: any,
+  onViewCandidate?: (candidateId: string) => void,
+  onSuggestionClick?: (action: string, description: string) => void
+): JSX.Element => {
+  if (toolName === 'search_candidates' && output?.candidates) {
+    return (
+      <SearchCandidatesResult
+        output={output as SearchCandidatesOutput}
+        onViewCandidate={onViewCandidate}
+      />
+    );
+  }
+
+  if (toolName === 'suggest_next_actions' && output?.suggestions) {
+    return (
+      <SuggestNextActionsResult
+        output={output as SuggestNextActionsOutput}
+        onSuggestionClick={onSuggestionClick}
+      />
+    );
+  }
+
+  return (
+    <pre
+      className='overflow-x-auto rounded p-2 text-xs'
+      style={{
+        backgroundColor: CHAT_COLORS.surface,
+        color: CHAT_COLORS.text.primary,
+        cursor: 'text',
+      }}
+    >
+      {JSON.stringify(output, null, 2)}
+    </pre>
+  );
+};
+
 export default function ToolCallDisplay({
   message,
   onViewCandidate,
+  onSuggestionClick,
 }: ToolCallDisplayProps): JSX.Element | null {
   if (!hasToolParts(message)) return null;
 
@@ -133,24 +177,11 @@ export default function ToolCallDisplay({
               typedPart.state === 'output-available' &&
               hasOutput && (
                 <div>
-                  {toolName === 'search_candidates' &&
-                  typedPart.output?.candidates ? (
-                    <SearchCandidatesResult
-                      output={typedPart.output as SearchCandidatesOutput}
-                      onViewCandidate={onViewCandidate}
-                    />
-                  ) : (
-                    <pre
-                      className='overflow-x-auto rounded p-2 text-xs'
-                      style={{
-                        backgroundColor: CHAT_COLORS.surface,
-                        color: CHAT_COLORS.text.primary,
-
-                        cursor: 'text',
-                      }}
-                    >
-                      {JSON.stringify(typedPart.output, null, 2)}
-                    </pre>
+                  {renderToolOutput(
+                    toolName,
+                    typedPart.output,
+                    onViewCandidate,
+                    onSuggestionClick
                   )}
                 </div>
               )}

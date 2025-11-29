@@ -26,6 +26,8 @@ export default function ChatInterface({
   apiEndpoint,
 }: ChatInterfaceProps): JSX.Element | null {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const savedScrollPositionRef = useRef<number>(0);
   const [input, setInput] = useState('');
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(
     null
@@ -73,6 +75,19 @@ export default function ChatInterface({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Restore scroll position when returning from candidate detail view
+  useEffect(() => {
+    if (!selectedCandidateId && messagesContainerRef.current) {
+      // Use setTimeout to ensure DOM has updated
+      setTimeout(() => {
+        if (messagesContainerRef.current) {
+          messagesContainerRef.current.scrollTop =
+            savedScrollPositionRef.current;
+        }
+      }, 0);
+    }
+  }, [selectedCandidateId]);
+
   const sendCurrentMessage = useCallback(async () => {
     const trimmedInput = input.trim();
     if (!trimmedInput || isStreaming) return;
@@ -98,12 +113,29 @@ export default function ChatInterface({
   };
 
   const handleViewCandidate = useCallback((candidateId: string) => {
+    // Save current scroll position before navigating away
+    if (messagesContainerRef.current) {
+      savedScrollPositionRef.current = messagesContainerRef.current.scrollTop;
+    }
     setSelectedCandidateId(candidateId);
   }, []);
 
   const handleBackToChat = useCallback(() => {
     setSelectedCandidateId(null);
   }, []);
+
+  const handleSuggestionClick = useCallback(
+    async (action: string, description: string) => {
+      if (isStreaming) return;
+
+      try {
+        await sendMessage({ text: description });
+      } catch {
+        // Errors surface via the onError callback from useChat.
+      }
+    },
+    [isStreaming, sendMessage]
+  );
 
   if (!isOpen) return null;
 
@@ -142,6 +174,7 @@ export default function ChatInterface({
           {/* Messages Area or Suggested Actions */}
           {hasMessages ? (
             <div
+              ref={messagesContainerRef}
               className='flex-1 overflow-y-auto px-4 py-5'
               style={{
                 background: 'linear-gradient(180deg, #f8f9fb 0%, #f1f3f5 100%)',
@@ -155,6 +188,7 @@ export default function ChatInterface({
                     message={message}
                     onQuestionClick={handleQuestionClick}
                     onViewCandidate={handleViewCandidate}
+                    onSuggestionClick={handleSuggestionClick}
                   />
                 ))}
                 {isStreaming && !hasActiveToolCall && <ChatLoadingIndicator />}
