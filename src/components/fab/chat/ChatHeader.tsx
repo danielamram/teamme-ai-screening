@@ -1,5 +1,5 @@
 import { JSX } from 'react';
-import { RotateCcw, Sparkles, X } from 'lucide-react';
+import { RotateCcw, X } from 'lucide-react';
 
 import { CHAT_COLORS } from './types';
 
@@ -17,103 +17,127 @@ export default function ChatHeader({
   hasMessages = false,
 }: ChatHeaderProps): JSX.Element {
   const getStatusText = () => {
-    if (isStreaming) return 'Searching candidate pool...';
-    if (hasMessages) return 'Ready to help';
-    return 'ATS AI Assistant';
+    if (isStreaming) return 'Thinking...';
+    if (hasMessages) return 'Online';
+    return 'Online';
   };
 
   return (
     <div
-      className='flex items-center justify-between px-5 py-4'
+      className='relative flex items-center justify-between px-5 py-4'
       style={{
         background: `linear-gradient(135deg, ${CHAT_COLORS.primary} 0%, ${CHAT_COLORS.primaryDark} 100%)`,
       }}
     >
-      <div className='flex items-center gap-3'>
+      {/* Subtle pattern overlay */}
+      <div
+        className='pointer-events-none absolute inset-0 opacity-[0.04]'
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
+          backgroundSize: '16px 16px',
+        }}
+      />
+
+      <div className='relative flex items-center gap-3'>
+        {/* Avatar with gradient ring */}
         <div className='relative'>
           <div
-            className='flex h-10 w-10 items-center justify-center rounded-xl shadow-lg'
+            className='flex h-10 w-10 items-center justify-center rounded-full'
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              backdropFilter: 'blur(10px)',
-              animation: isStreaming
-                ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-                : 'none',
+              background: 'linear-gradient(135deg, #a5b4fc 0%, #818cf8 100%)',
+              boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)',
             }}
           >
-            <Sparkles
-              size={18}
-              color='#FFFFFF'
-              style={{
-                animation: isStreaming ? 'spin 3s linear infinite' : 'none',
-              }}
-            />
+            <span className='text-base font-semibold text-white'>A</span>
           </div>
-          {/* Status indicator dot */}
-          {!isStreaming && (
-            <div
-              className='absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white'
-              style={{
-                backgroundColor: '#10b981',
-                animation:
-                  'statusPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              }}
-            />
-          )}
+          {/* Status indicator */}
+          <div
+            className='absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full'
+            style={{
+              backgroundColor: isStreaming ? CHAT_COLORS.warning : '#22c55e',
+              border: '2.5px solid white',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
+              animation: isStreaming
+                ? 'statusBlink 1s ease-in-out infinite'
+                : 'none',
+            }}
+          />
         </div>
-        <div>
-          <span className='block text-sm font-bold text-white'>Anna</span>
-          <span className='block text-xs text-white/80'>{getStatusText()}</span>
+
+        {/* Name and status */}
+        <div className='flex flex-col'>
+          <span className='text-[15px] font-semibold leading-tight text-white'>
+            Anna
+          </span>
+          <span
+            className='flex items-center gap-1.5 text-xs text-white/75'
+            style={{ marginTop: '2px' }}
+          >
+            {isStreaming && (
+              <span className='flex gap-0.5'>
+                <span
+                  className='h-1 w-1 rounded-full bg-white/80'
+                  style={{ animation: 'dotBounce 1.2s infinite ease-in-out' }}
+                />
+                <span
+                  className='h-1 w-1 rounded-full bg-white/80'
+                  style={{
+                    animation: 'dotBounce 1.2s infinite ease-in-out 0.2s',
+                  }}
+                />
+                <span
+                  className='h-1 w-1 rounded-full bg-white/80'
+                  style={{
+                    animation: 'dotBounce 1.2s infinite ease-in-out 0.4s',
+                  }}
+                />
+              </span>
+            )}
+            {getStatusText()}
+          </span>
         </div>
       </div>
-      <div className='flex items-center gap-2'>
+
+      {/* Action buttons */}
+      <div className='relative flex items-center gap-1'>
         {hasMessages && (
           <button
             type='button'
             onClick={onReset}
-            className='rounded-lg p-2 transition-all hover:bg-white/20'
+            className='group flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 hover:bg-white/15 active:scale-95'
             aria-label='Reset chat'
-            title='Reset chat'
+            title='Start new chat'
           >
-            <RotateCcw size={18} color='#FFFFFF' />
+            <RotateCcw
+              size={16}
+              className='text-white/90 transition-transform duration-200 group-hover:rotate-[-30deg]'
+            />
           </button>
         )}
         <button
           type='button'
           onClick={onClose}
-          className='rounded-lg p-2 transition-all hover:bg-white/20'
+          className='group flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 hover:bg-white/15 active:scale-95'
           aria-label='Close chat'
         >
-          <X size={18} color='#FFFFFF' />
+          <X size={16} className='text-white/90' />
         </button>
       </div>
 
       {/* Animation styles */}
       <style>{`
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.7;
-          }
+        @keyframes statusBlink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
         }
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
+        @keyframes dotBounce {
+          0%, 80%, 100% {
+            transform: translateY(0);
+            opacity: 0.5;
           }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-        @keyframes statusPulse {
-          0%, 100% {
+          40% {
+            transform: translateY(-3px);
             opacity: 1;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.8;
-            transform: scale(1.1);
           }
         }
       `}</style>

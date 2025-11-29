@@ -86,7 +86,7 @@ export default function ChatInput({
               onKeyDown={handleKeyDown}
               placeholder='Ask Anna anything...'
               rows={1}
-              className='w-full resize-none bg-transparent pb-2 pr-4 pt-3 text-sm outline-none placeholder:text-gray-400 focus:outline-none'
+              className='w-full resize-none bg-transparent pb-2 pr-4 pt-3 text-base outline-none placeholder:text-gray-400 focus:outline-none'
               style={{
                 border: 'none',
                 color: CHAT_COLORS.text.primary,

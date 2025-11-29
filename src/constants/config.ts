@@ -8,10 +8,6 @@
 const getEnvVar = (key: string, fallback: string): string => {
   const value = import.meta.env[key];
   if (!value) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      `Environment variable ${key} is not set, using fallback: ${fallback}`
-    );
     return fallback;
   }
   return value;
