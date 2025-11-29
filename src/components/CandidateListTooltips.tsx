@@ -1,7 +1,7 @@
 import { JSX, useCallback, useEffect, useRef, useState } from 'react';
 
 import { getScoreColor } from '@/constants/design';
-import { getCandidateFromAPI } from '@/utils/candidateApi';
+import { fetchCandidateData } from '@/utils/candidateApi';
 
 import { CHAT_COLORS } from './fab/chat/types';
 
@@ -94,11 +94,11 @@ export default function CandidateListTooltips(): JSX.Element | null {
       }));
 
       try {
-        const candidate = await getCandidateFromAPI(candidateId);
+        const apiResponse = await fetchCandidateData(candidateId);
         setCandidateCache((prev) => ({
           ...prev,
           [candidateId]: {
-            score: candidate.score,
+            score: apiResponse.detailed_summary.score,
             loading: false,
             error: false,
             timestamp: Date.now(),
