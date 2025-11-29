@@ -1,9 +1,10 @@
-import { JSX } from 'react';
 import type { UIMessage } from 'ai';
 import { Check, Loader2 } from 'lucide-react';
-import type { SearchCandidatesOutput } from './SearchCandidatesResult';
+import { JSX } from 'react';
 
-import SearchCandidatesResult from './SearchCandidatesResult';
+import SearchCandidatesResult, {
+  type SearchCandidatesOutput,
+} from './SearchCandidatesResult';
 import { CHAT_COLORS } from './types';
 
 interface ToolCallDisplayProps {
@@ -11,7 +12,7 @@ interface ToolCallDisplayProps {
   onViewCandidate?: (candidateId: string) => void;
 }
 
-export const hasToolParts = (message: UIMessage): boolean =>
+const hasToolParts = (message: UIMessage): boolean =>
   message.parts.some(
     (part) => part.type !== 'text' && part.type.startsWith('tool-')
   );
@@ -20,9 +21,7 @@ export default function ToolCallDisplay({
   message,
   onViewCandidate,
 }: ToolCallDisplayProps): JSX.Element | null {
-  if (!hasToolParts(message)) {
-    return null;
-  }
+  if (!hasToolParts(message)) return null;
 
   return (
     <div className='mt-3 flex flex-col gap-2'>

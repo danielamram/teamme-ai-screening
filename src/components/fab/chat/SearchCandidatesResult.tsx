@@ -37,6 +37,29 @@ const getConfirmationBackground = (action: ConfirmingAction): string => {
   return 'transparent';
 };
 
+const getButtonStyle = (variant: ActionItem['variant'] = 'default') => {
+  switch (variant) {
+    case 'primary':
+      return {
+        backgroundColor: CHAT_COLORS.primary,
+        color: '#FFFFFF',
+        border: 'none',
+      };
+    case 'danger':
+      return {
+        backgroundColor: 'transparent',
+        color: CHAT_COLORS.error,
+        border: `1px solid ${CHAT_COLORS.error}40`,
+      };
+    default:
+      return {
+        backgroundColor: 'transparent',
+        color: CHAT_COLORS.text.secondary,
+        border: `1px solid ${CHAT_COLORS.border}`,
+      };
+  }
+};
+
 export default function SearchCandidatesResult({
   output,
   onViewCandidate,
@@ -48,6 +71,7 @@ export default function SearchCandidatesResult({
   const [confirmingAction, setConfirmingAction] =
     useState<ConfirmingAction>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const isSelectionMode = selectedIds.size > 0;
   const allSelected =
@@ -119,29 +143,6 @@ export default function SearchCandidatesResult({
       onClick: () => setConfirmingAction('approve'),
     },
   ];
-
-  const getButtonStyle = (variant: ActionItem['variant'] = 'default') => {
-    switch (variant) {
-      case 'primary':
-        return {
-          backgroundColor: CHAT_COLORS.primary,
-          color: '#FFFFFF',
-          border: 'none',
-        };
-      case 'danger':
-        return {
-          backgroundColor: 'transparent',
-          color: CHAT_COLORS.error,
-          border: `1px solid ${CHAT_COLORS.error}40`,
-        };
-      default:
-        return {
-          backgroundColor: 'transparent',
-          color: CHAT_COLORS.text.secondary,
-          border: `1px solid ${CHAT_COLORS.border}`,
-        };
-    }
-  };
 
   return (
     <div className='space-y-4'>
@@ -346,8 +347,12 @@ export default function SearchCandidatesResult({
             candidate={candidate}
             selectable
             selected={selectedIds.has(candidate.id)}
+            isHovered={hoveredId === candidate.id}
             onSelectionChange={handleSelectionChange}
             onViewCandidate={onViewCandidate}
+            onHoverChange={(hovered) =>
+              setHoveredId(hovered ? candidate.id : null)
+            }
           />
         ))}
       </div>

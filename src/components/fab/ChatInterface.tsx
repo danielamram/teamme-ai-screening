@@ -1,7 +1,6 @@
-import { JSX, useCallback, useEffect, useRef, useState } from 'react';
-import type { UIMessage } from 'ai';
 import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+import { type UIMessage, DefaultChatTransport } from 'ai';
+import { JSX, useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   CandidateDetailView,
@@ -28,7 +27,9 @@ export default function ChatInterface({
 }: ChatInterfaceProps): JSX.Element | null {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState('');
-  const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
+  const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(
+    null
+  );
 
   const { messages, sendMessage, status, stop, setMessages } =
     useChat<UIMessage>({

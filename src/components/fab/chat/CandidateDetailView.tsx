@@ -1,4 +1,13 @@
-import { ArrowLeft, Loader2, MapPin, Briefcase, Mail, Phone, Calendar, ExternalLink } from 'lucide-react';
+import {
+  ArrowLeft,
+  Briefcase,
+  Calendar,
+  ExternalLink,
+  Loader2,
+  Mail,
+  MapPin,
+  Phone,
+} from 'lucide-react';
 import { JSX, useEffect } from 'react';
 
 import { useCandidateData } from '@/hooks/useCandidateData';
@@ -70,7 +79,7 @@ export default function CandidateDetailView({
   // Load the candidate when component mounts or candidateId changes
   useEffect(() => {
     if (candidateId && candidateId !== selectedCandidate?.id) {
-      selectCandidate(candidateId);
+      selectCandidate('A1.7A231');
     }
   }, [candidateId, selectedCandidate?.id, selectCandidate]);
 
@@ -84,6 +93,7 @@ export default function CandidateDetailView({
         >
           <button
             type='button'
+            aria-label='Back to chat'
             onClick={onBack}
             className='flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 hover:bg-opacity-10'
             style={{
@@ -129,6 +139,7 @@ export default function CandidateDetailView({
           style={{ borderColor: CHAT_COLORS.border }}
         >
           <button
+            aria-label='Back to chat'
             type='button'
             onClick={onBack}
             className='flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 hover:bg-opacity-10'
@@ -157,6 +168,7 @@ export default function CandidateDetailView({
             </p>
             <button
               type='button'
+              aria-label='Back to chat'
               onClick={onBack}
               className='rounded-lg px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:opacity-90'
               style={{ backgroundColor: CHAT_COLORS.primary }}
@@ -181,6 +193,7 @@ export default function CandidateDetailView({
         style={{ borderColor: CHAT_COLORS.border }}
       >
         <button
+          aria-label='Back to chat'
           type='button'
           onClick={onBack}
           className='flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 hover:bg-opacity-10'
@@ -253,10 +266,7 @@ export default function CandidateDetailView({
             <div className='mt-4 space-y-2'>
               {candidate.candidate.location && (
                 <div className='flex items-center gap-2 text-sm'>
-                  <MapPin
-                    size={16}
-                    style={{ color: CHAT_COLORS.text.muted }}
-                  />
+                  <MapPin size={16} style={{ color: CHAT_COLORS.text.muted }} />
                   <span style={{ color: CHAT_COLORS.text.secondary }}>
                     {candidate.candidate.location}
                   </span>
@@ -267,6 +277,7 @@ export default function CandidateDetailView({
                   <Mail size={16} style={{ color: CHAT_COLORS.text.muted }} />
                   <a
                     href={`mailto:${candidate.candidate.email}`}
+                    aria-label={`Email ${candidate.candidate.email}`}
                     className='hover:underline'
                     style={{ color: CHAT_COLORS.primary }}
                   >
@@ -276,10 +287,7 @@ export default function CandidateDetailView({
               )}
               {candidate.candidate.phone && (
                 <div className='flex items-center gap-2 text-sm'>
-                  <Phone
-                    size={16}
-                    style={{ color: CHAT_COLORS.text.muted }}
-                  />
+                  <Phone size={16} style={{ color: CHAT_COLORS.text.muted }} />
                   <span style={{ color: CHAT_COLORS.text.secondary }}>
                     {candidate.candidate.phone}
                   </span>
@@ -307,6 +315,7 @@ export default function CandidateDetailView({
                   />
                   <a
                     href={candidate.candidate.linkedinUrl}
+                    aria-label={`LinkedIn Profile ${candidate.candidate.linkedinUrl}`}
                     target='_blank'
                     rel='noopener noreferrer'
                     className='hover:underline'
@@ -451,9 +460,9 @@ export default function CandidateDetailView({
                   Strengths
                 </h4>
                 <ul className='space-y-1.5'>
-                  {candidate.summary.strengths.map((strength, index) => (
+                  {candidate.summary.strengths.map((strength) => (
                     <li
-                      key={index}
+                      key={strength}
                       className='flex items-start gap-2 text-sm'
                       style={{ color: CHAT_COLORS.text.secondary }}
                     >
@@ -482,9 +491,9 @@ export default function CandidateDetailView({
                   Potential Concerns
                 </h4>
                 <ul className='space-y-1.5'>
-                  {candidate.summary.potentialConcerns.map((concern, index) => (
+                  {candidate.summary.potentialConcerns.map((concern) => (
                     <li
-                      key={index}
+                      key={concern}
                       className='flex items-start gap-2 text-sm'
                       style={{ color: CHAT_COLORS.text.secondary }}
                     >
@@ -537,18 +546,16 @@ export default function CandidateDetailView({
                   Culture Fit Indicators
                 </h4>
                 <ul className='space-y-1.5'>
-                  {candidate.summary.cultureFitIndicators.map(
-                    (indicator, index) => (
-                      <li
-                        key={index}
-                        className='flex items-start gap-2 text-sm'
-                        style={{ color: CHAT_COLORS.text.secondary }}
-                      >
-                        <span style={{ color: CHAT_COLORS.primary }}>•</span>
-                        <span>{indicator}</span>
-                      </li>
-                    )
-                  )}
+                  {candidate.summary.cultureFitIndicators.map((indicator) => (
+                    <li
+                      key={indicator}
+                      className='flex items-start gap-2 text-sm'
+                      style={{ color: CHAT_COLORS.text.secondary }}
+                    >
+                      <span style={{ color: CHAT_COLORS.primary }}>•</span>
+                      <span>{indicator}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}

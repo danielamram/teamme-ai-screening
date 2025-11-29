@@ -12,3 +12,4 @@ export { default as SearchCandidatesResult } from './SearchCandidatesResult';
 export { default as ToolCallDisplay } from './ToolCallDisplay';
 export { CHAT_COLORS } from './types';
 export type { SuggestionItem } from './types';
+export type { SearchCandidatesOutput } from './SearchCandidatesResult';

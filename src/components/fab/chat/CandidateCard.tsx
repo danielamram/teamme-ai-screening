@@ -1,7 +1,6 @@
-import { Check, ChevronDown, ChevronUp, Copy, MapPin } from 'lucide-react';
-import { JSX, useState } from 'react';
-
 import { SearchCandidate } from '@/types/candidate';
+import { Check, ChevronDown, ChevronUp, Copy, MapPin } from 'lucide-react';
+import React, { JSX, useState } from 'react';
 import { CHAT_COLORS } from './types';
 
 // Generate initials from name
@@ -53,18 +52,21 @@ export default function CandidateCard({
   candidate,
   selectable = false,
   selected = false,
+  isHovered = false,
   onSelectionChange,
   onViewCandidate,
+  onHoverChange,
 }: {
   candidate: SearchCandidate;
   selectable?: boolean;
   selected?: boolean;
+  isHovered?: boolean;
   onSelectionChange?: (id: string, selected: boolean) => void;
   onViewCandidate?: (candidateId: string) => void;
+  onHoverChange?: (hovered: boolean) => void;
 }): JSX.Element {
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const maxSummaryLength = 150;
   const needsTruncation = candidate.summary.length > maxSummaryLength;
   const displaySummary =
@@ -88,10 +90,16 @@ export default function CandidateCard({
   };
 
   const handleCardClick = () => {
+    console.log('handleCardClick', onViewCandidate);
+    if (onViewCandidate) {
+      onViewCandidate(candidate.id);
+    }
+  };
+
+  const handleAvatarClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (selectable && onSelectionChange) {
       onSelectionChange(candidate.id, !selected);
-    } else if (onViewCandidate) {
-      onViewCandidate(candidate.id);
     }
   };
 
@@ -101,11 +109,11 @@ export default function CandidateCard({
     return CHAT_COLORS.border;
   };
 
-  const isClickable = selectable || onViewCandidate;
+  const isClickable = !!onViewCandidate;
 
   return (
     <div
-      className='group relative overflow-hidden rounded-2xl border transition-all duration-300'
+      className='group relative cursor-pointer overflow-hidden rounded-2xl border transition-all duration-300'
       style={{
         backgroundColor: selected
           ? `${CHAT_COLORS.primary}08`
@@ -116,8 +124,9 @@ export default function CandidateCard({
           : '0 2px 8px -2px rgba(0,0,0,0.06)',
         cursor: isClickable ? 'pointer' : 'default',
       }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => onHoverChange?.(true)}
+      onMouseLeave={() => onHoverChange?.(false)}
+      onClick={handleCardClick}
     >
       {/* Subtle gradient accent at top */}
       <div
@@ -134,11 +143,7 @@ export default function CandidateCard({
       {isClickable && (
         <button
           type='button'
-          aria-label={
-            selectable
-              ? `${selected ? 'Deselect' : 'Select'} ${candidate.name}`
-              : `View ${candidate.name}`
-          }
+          aria-label={`View ${candidate.name}`}
           className='absolute inset-0 z-0'
           onClick={handleCardClick}
         />
@@ -150,24 +155,13 @@ export default function CandidateCard({
           {/* Flipping Avatar for selection */}
           <button
             type='button'
-            aria-label={
-              selectable
-                ? `Select ${candidate.name}`
-                : `Select ${candidate.name}`
-            }
+            aria-label={`${selected ? 'Deselect' : 'Select'} ${candidate.name}`}
             className='relative shrink-0'
             style={{
               perspective: '600px',
               cursor: selectable ? 'pointer' : 'default',
             }}
-            onClick={
-              selectable
-                ? (e) => {
-                    e.stopPropagation();
-                    handleCardClick();
-                  }
-                : undefined
-            }
+            onClick={selectable ? handleAvatarClick : undefined}
             disabled={!selectable}
           >
             {/* Gradient ring */}
