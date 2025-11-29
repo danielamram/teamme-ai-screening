@@ -24,53 +24,37 @@ export interface SearchCandidate {
 }
 
 // API Response Types
-export interface APICandidateMetadata {
-  person_uid: string;
-  position_uid: string;
-  prospect_status: string | null;
-  time_last_status_changed: string;
-  comeet_url: string;
-  current_steps: Array<{
-    name: string;
-    type: string;
-    time_scheduled: string | null;
-    position_step_uid: string;
-  }>;
-  completed_steps: unknown[];
-  experience_summary: string;
-  deleted: boolean;
+export interface DetailedSummary {
+  score: number;
+  overview: string;
+  keySkills: string[];
+  strengths: string[];
+  recommendation: string;
+  educationSummary: string;
+  experienceSummary: string;
+  potentialConcerns: string[];
+  yearsOfExperience: number;
+  cultureFitIndicators: string[];
 }
 
-export interface APICandidateInfo {
+export interface APICandidateResponse {
   id: string;
-  provider: string;
   name: string;
   email: string;
   phone: string;
   location: string;
-  resumeUrl: string;
-  skills: string[];
-  status: string;
-  applicationDate: string;
-  linkedinUrl: string;
-  metadata: APICandidateMetadata;
-}
-
-export interface APICandidateSummary {
-  overview: string;
-  keySkills: string[];
-  experienceSummary: string;
-  educationSummary: string;
-  strengths: string[];
-  potentialConcerns: string[];
-  score: number;
-  cultureFitIndicators: string[];
-  recommendation: string;
-  yearsOfExperience: number;
-}
-
-export interface APICandidateResponse {
-  candidate: APICandidateInfo;
-  summary: APICandidateSummary;
-  generatedAt: string;
+  position_id: string;
+  summary: string;
+  detailed_summary: DetailedSummary;
+  primary_stack: string[];
+  languages: string[] | null;
+  linkedin_url: string | null;
+  portfolio_url: string | null;
+  github_url: string | null;
+  resume_url: string | null;
+  status: string | null;
+  application_date: string | null;
+  applied_position: string | null;
+  created_at: string;
+  updated_at: string;
 }

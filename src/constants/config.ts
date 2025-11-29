@@ -26,7 +26,7 @@ export const API_CONFIG = {
   candidate: {
     baseUrl: getEnvVar(
       'VITE_CANDIDATE_API_URL',
-      'https://teamme-acquisition.vercel.app/api/candidates'
+      'https://teamme-acquisition.vercel.app/api'
     ),
   },
   apiKey: import.meta.env.VITE_API_KEY,

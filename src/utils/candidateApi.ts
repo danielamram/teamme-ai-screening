@@ -4,13 +4,15 @@ import { API_CONFIG } from '@/constants/config';
 
 const API_BASE_URL = API_CONFIG.candidate.baseUrl;
 
+const ORG_ID = `43056006-5003-4871-bc5b-95a0a93a39be`;
+
 /**
  * Fetch candidate data from the API
  */
 export async function fetchCandidateData(
   candidateId: string
 ): Promise<APICandidateResponse> {
-  const url = `${API_BASE_URL}/comeet/${candidateId}`;
+  const url = `${API_BASE_URL}/organizations/${ORG_ID}/candidates/${candidateId}`;
 
   try {
     const headers: Record<string, string> = {
@@ -48,23 +50,26 @@ export async function fetchCandidateData(
 export function transformAPIResponseToCandidate(
   apiResponse: APICandidateResponse
 ): Candidate {
-  const { candidate: apiCandidate, summary } = apiResponse;
+  // Destructure and rename snake_case fields to camelCase
+  const {
+    detailed_summary: detailedSummary,
+    applied_position: appliedPosition,
+  } = apiResponse;
 
-  // Extract position from metadata if available
-  const position =
-    apiCandidate.metadata.current_steps?.[0]?.name || 'Position Not Specified';
+  // Use applied_position if available, otherwise fall back to a generic label
+  const position = appliedPosition || 'Position Not Specified';
 
   return {
-    id: apiCandidate.id,
-    name: apiCandidate.name,
+    id: apiResponse.id,
+    name: apiResponse.name,
     position,
-    company: apiCandidate.provider || 'Unknown Company',
-    location: apiCandidate.location || 'Location Not Specified',
-    score: summary.score,
-    overview: summary.overview,
-    strengths: summary.strengths,
-    recommendationReasoning: summary.recommendation,
-    redFlags: summary.potentialConcerns,
+    company: 'TeamMe', // Company info not in API response, using default
+    location: apiResponse.location || 'Location Not Specified',
+    score: detailedSummary.score,
+    overview: detailedSummary.overview,
+    strengths: detailedSummary.strengths,
+    recommendationReasoning: detailedSummary.recommendation,
+    redFlags: detailedSummary.potentialConcerns,
   };
 }
 

@@ -8,7 +8,7 @@ import {
   MapPin,
   Phone,
 } from 'lucide-react';
-import { JSX, useEffect } from 'react';
+import { JSX } from 'react';
 
 import { useCandidateData } from '@/hooks/useCandidateData';
 import { CHAT_COLORS } from './types';
@@ -74,14 +74,7 @@ export default function CandidateDetailView({
   candidateId,
   onBack,
 }: CandidateDetailViewProps): JSX.Element {
-  const { selectedCandidate, loading, selectCandidate } = useCandidateData();
-
-  // Load the candidate when component mounts or candidateId changes
-  useEffect(() => {
-    if (candidateId && candidateId !== selectedCandidate?.candidate.id) {
-      selectCandidate('A1.7A231');
-    }
-  }, [candidateId, selectedCandidate?.candidate.id, selectCandidate]);
+  const { candidate, loading } = useCandidateData({ candidateId });
 
   if (loading) {
     return (
@@ -130,7 +123,7 @@ export default function CandidateDetailView({
     );
   }
 
-  if (!selectedCandidate) {
+  if (!candidate) {
     return (
       <div className='flex h-full flex-col'>
         {/* Header with Back Button */}
@@ -181,10 +174,9 @@ export default function CandidateDetailView({
     );
   }
 
-  const candidate = selectedCandidate;
-  const candidateName = candidate.candidate.name;
+  const candidateName = candidate.name;
   const [gradientStart, gradientEnd] = getAvatarGradient(candidateName);
-  const scoreColor = getScoreColor(candidate.summary.score);
+  const scoreColor = getScoreColor(candidate.detailed_summary.score);
 
   return (
     <div className='flex h-full flex-col'>
@@ -257,7 +249,7 @@ export default function CandidateDetailView({
                       color: scoreColor,
                     }}
                   >
-                    Score: {candidate.summary.score}/100
+                    Score: {candidate.detailed_summary.score}/100
                   </div>
                 </div>
               </div>
@@ -265,36 +257,36 @@ export default function CandidateDetailView({
 
             {/* Contact & Location Info */}
             <div className='mt-4 space-y-2'>
-              {candidate.candidate.location && (
+              {candidate.location && (
                 <div className='flex items-center gap-2 text-sm'>
                   <MapPin size={16} style={{ color: CHAT_COLORS.text.muted }} />
                   <span style={{ color: CHAT_COLORS.text.secondary }}>
-                    {candidate.candidate.location}
+                    {candidate.location}
                   </span>
                 </div>
               )}
-              {candidate.candidate.email && (
+              {candidate.email && (
                 <div className='flex items-center gap-2 text-sm'>
                   <Mail size={16} style={{ color: CHAT_COLORS.text.muted }} />
                   <a
-                    href={`mailto:${candidate.candidate.email}`}
-                    aria-label={`Email ${candidate.candidate.email}`}
+                    href={`mailto:${candidate.email}`}
+                    aria-label={`Email ${candidate.email}`}
                     className='hover:underline'
                     style={{ color: CHAT_COLORS.primary }}
                   >
-                    {candidate.candidate.email}
+                    {candidate.email}
                   </a>
                 </div>
               )}
-              {candidate.candidate.phone && (
+              {candidate.phone && (
                 <div className='flex items-center gap-2 text-sm'>
                   <Phone size={16} style={{ color: CHAT_COLORS.text.muted }} />
                   <span style={{ color: CHAT_COLORS.text.secondary }}>
-                    {candidate.candidate.phone}
+                    {candidate.phone}
                   </span>
                 </div>
               )}
-              {candidate.candidate.applicationDate && (
+              {candidate.application_date && (
                 <div className='flex items-center gap-2 text-sm'>
                   <Calendar
                     size={16}
@@ -302,21 +294,19 @@ export default function CandidateDetailView({
                   />
                   <span style={{ color: CHAT_COLORS.text.secondary }}>
                     Applied:{' '}
-                    {new Date(
-                      candidate.candidate.applicationDate
-                    ).toLocaleDateString()}
+                    {new Date(candidate.application_date).toLocaleDateString()}
                   </span>
                 </div>
               )}
-              {candidate.candidate.linkedinUrl && (
+              {candidate.linkedin_url && (
                 <div className='flex items-center gap-2 text-sm'>
                   <ExternalLink
                     size={16}
                     style={{ color: CHAT_COLORS.text.muted }}
                   />
                   <a
-                    href={candidate.candidate.linkedinUrl}
-                    aria-label={`LinkedIn Profile ${candidate.candidate.linkedinUrl}`}
+                    href={candidate.linkedin_url}
+                    aria-label={`LinkedIn Profile ${candidate.linkedin_url}`}
                     target='_blank'
                     rel='noopener noreferrer'
                     className='hover:underline'
@@ -330,7 +320,7 @@ export default function CandidateDetailView({
           </div>
 
           {/* Overview */}
-          {candidate.summary.overview && (
+          {candidate.detailed_summary.overview && (
             <div
               className='rounded-2xl border p-4'
               style={{
@@ -348,14 +338,14 @@ export default function CandidateDetailView({
                 className='text-sm leading-relaxed'
                 style={{ color: CHAT_COLORS.text.secondary }}
               >
-                {candidate.summary.overview}
+                {candidate.detailed_summary.overview}
               </p>
             </div>
           )}
 
           {/* Skills */}
-          {candidate.candidate.skills &&
-            candidate.candidate.skills.length > 0 && (
+          {candidate.detailed_summary.keySkills &&
+            candidate.detailed_summary.keySkills.length > 0 && (
               <div
                 className='rounded-2xl border p-4'
                 style={{
@@ -370,7 +360,7 @@ export default function CandidateDetailView({
                   Skills
                 </h4>
                 <div className='flex flex-wrap gap-1.5'>
-                  {candidate.candidate.skills.map((skill, index) => {
+                  {candidate.detailed_summary.keySkills.map((skill, index) => {
                     const colors = getSkillColor(index);
                     return (
                       <span
@@ -391,7 +381,7 @@ export default function CandidateDetailView({
             )}
 
           {/* Experience Summary */}
-          {candidate.summary.experienceSummary && (
+          {candidate.detailed_summary.experienceSummary && (
             <div
               className='rounded-2xl border p-4'
               style={{
@@ -408,20 +398,21 @@ export default function CandidateDetailView({
                   className='text-sm font-semibold uppercase tracking-wide'
                   style={{ color: CHAT_COLORS.text.muted }}
                 >
-                  Experience ({candidate.summary.yearsOfExperience} years)
+                  Experience ({candidate.detailed_summary.yearsOfExperience}{' '}
+                  years)
                 </h4>
               </div>
               <p
                 className='text-sm leading-relaxed'
                 style={{ color: CHAT_COLORS.text.secondary }}
               >
-                {candidate.summary.experienceSummary}
+                {candidate.detailed_summary.experienceSummary}
               </p>
             </div>
           )}
 
           {/* Education */}
-          {candidate.summary.educationSummary && (
+          {candidate.detailed_summary.educationSummary && (
             <div
               className='rounded-2xl border p-4'
               style={{
@@ -439,14 +430,14 @@ export default function CandidateDetailView({
                 className='text-sm leading-relaxed'
                 style={{ color: CHAT_COLORS.text.secondary }}
               >
-                {candidate.summary.educationSummary}
+                {candidate.detailed_summary.educationSummary}
               </p>
             </div>
           )}
 
           {/* Strengths */}
-          {candidate.summary.strengths &&
-            candidate.summary.strengths.length > 0 && (
+          {candidate.detailed_summary.strengths &&
+            candidate.detailed_summary.strengths.length > 0 && (
               <div
                 className='rounded-2xl border p-4'
                 style={{
@@ -461,7 +452,7 @@ export default function CandidateDetailView({
                   Strengths
                 </h4>
                 <ul className='space-y-1.5'>
-                  {candidate.summary.strengths.map((strength) => (
+                  {candidate.detailed_summary.strengths.map((strength) => (
                     <li
                       key={strength}
                       className='flex items-start gap-2 text-sm'
@@ -476,8 +467,8 @@ export default function CandidateDetailView({
             )}
 
           {/* Potential Concerns */}
-          {candidate.summary.potentialConcerns &&
-            candidate.summary.potentialConcerns.length > 0 && (
+          {candidate.detailed_summary.potentialConcerns &&
+            candidate.detailed_summary.potentialConcerns.length > 0 && (
               <div
                 className='rounded-2xl border p-4'
                 style={{
@@ -492,22 +483,24 @@ export default function CandidateDetailView({
                   Potential Concerns
                 </h4>
                 <ul className='space-y-1.5'>
-                  {candidate.summary.potentialConcerns.map((concern) => (
-                    <li
-                      key={concern}
-                      className='flex items-start gap-2 text-sm'
-                      style={{ color: CHAT_COLORS.text.secondary }}
-                    >
-                      <span style={{ color: CHAT_COLORS.warning }}>⚠</span>
-                      <span>{concern}</span>
-                    </li>
-                  ))}
+                  {candidate.detailed_summary.potentialConcerns.map(
+                    (concern) => (
+                      <li
+                        key={concern}
+                        className='flex items-start gap-2 text-sm'
+                        style={{ color: CHAT_COLORS.text.secondary }}
+                      >
+                        <span style={{ color: CHAT_COLORS.warning }}>⚠</span>
+                        <span>{concern}</span>
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
             )}
 
           {/* Recommendation */}
-          {candidate.summary.recommendation && (
+          {candidate.detailed_summary.recommendation && (
             <div
               className='rounded-2xl border p-4'
               style={{
@@ -525,14 +518,14 @@ export default function CandidateDetailView({
                 className='text-sm leading-relaxed'
                 style={{ color: CHAT_COLORS.text.secondary }}
               >
-                {candidate.summary.recommendation}
+                {candidate.detailed_summary.recommendation}
               </p>
             </div>
           )}
 
           {/* Culture Fit */}
-          {candidate.summary.cultureFitIndicators &&
-            candidate.summary.cultureFitIndicators.length > 0 && (
+          {candidate.detailed_summary.cultureFitIndicators &&
+            candidate.detailed_summary.cultureFitIndicators.length > 0 && (
               <div
                 className='rounded-2xl border p-4'
                 style={{
@@ -547,16 +540,18 @@ export default function CandidateDetailView({
                   Culture Fit Indicators
                 </h4>
                 <ul className='space-y-1.5'>
-                  {candidate.summary.cultureFitIndicators.map((indicator) => (
-                    <li
-                      key={indicator}
-                      className='flex items-start gap-2 text-sm'
-                      style={{ color: CHAT_COLORS.text.secondary }}
-                    >
-                      <span style={{ color: CHAT_COLORS.primary }}>•</span>
-                      <span>{indicator}</span>
-                    </li>
-                  ))}
+                  {candidate.detailed_summary.cultureFitIndicators.map(
+                    (indicator) => (
+                      <li
+                        key={indicator}
+                        className='flex items-start gap-2 text-sm'
+                        style={{ color: CHAT_COLORS.text.secondary }}
+                      >
+                        <span style={{ color: CHAT_COLORS.primary }}>•</span>
+                        <span>{indicator}</span>
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
             )}

@@ -1,4 +1,4 @@
-import { Candidate } from './candidate';
+import type { APICandidateResponse } from './candidate';
 
 export interface SidebarState {
   isOpen: boolean;
@@ -8,7 +8,7 @@ export interface SidebarState {
 
 export interface CandidatesCache {
   [candidateId: string]: {
-    data: Candidate;
+    data: APICandidateResponse;
     timestamp: number;
   };
 }
