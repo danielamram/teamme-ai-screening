@@ -99,28 +99,29 @@ export default function ChatHeader({
       </div>
 
       {/* Action buttons */}
-      <div className='relative flex items-center gap-1'>
+      <div className='relative flex items-center gap-0.5'>
         {hasMessages && (
           <button
             type='button'
             onClick={onReset}
-            className='group flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 hover:bg-white/15 active:scale-95'
+            className='group flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200 hover:bg-white/15 active:scale-90'
             aria-label='Reset chat'
             title='Start new chat'
           >
             <RotateCcw
-              size={16}
-              className='text-white/90 transition-transform duration-200 group-hover:rotate-[-30deg]'
+              size={15}
+              strokeWidth={2.5}
+              className='text-white/90 transition-transform duration-300 group-hover:rotate-[-45deg]'
             />
           </button>
         )}
         <button
           type='button'
           onClick={onClose}
-          className='group flex h-8 w-8 items-center justify-center rounded-full transition-all duration-200 hover:bg-white/15 active:scale-95'
+          className='group flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200 hover:bg-white/15 active:scale-90'
           aria-label='Close chat'
         >
-          <X size={16} className='text-white/90' />
+          <X size={15} strokeWidth={2.5} className='text-white/90' />
         </button>
       </div>
 

@@ -16,22 +16,25 @@ export default function SendButton({
   onSend,
   onStop,
 }: SendButtonProps): JSX.Element {
+  const hasInput = input.trim().length > 0;
+
   if (isStreaming) {
     return (
       <button
         type='button'
         onClick={onStop}
-        className='group rounded-xl p-2.5 shadow-sm transition-all hover:shadow-md'
+        className='group flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200 active:scale-90'
         style={{
           backgroundColor: CHAT_COLORS.error,
+          boxShadow: `0 2px 8px ${CHAT_COLORS.error}40`,
         }}
         aria-label='Stop generating'
       >
         <Square
-          size={16}
+          size={14}
           color='#FFFFFF'
           fill='#FFFFFF'
-          className='transition-transform group-hover:scale-110'
+          className='transition-transform'
         />
       </button>
     );
@@ -41,22 +44,20 @@ export default function SendButton({
     <button
       type='button'
       onClick={onSend}
-      className='group rounded-xl p-2.5 shadow-sm transition-all hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50'
+      className='group flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200 active:scale-90 disabled:cursor-not-allowed'
       style={{
-        backgroundColor:
-          input.trim() && !isStreaming
-            ? CHAT_COLORS.primary
-            : CHAT_COLORS.borderLight,
+        backgroundColor: hasInput ? CHAT_COLORS.primary : '#e8eaed',
+        boxShadow: hasInput ? `0 2px 8px ${CHAT_COLORS.primary}40` : 'none',
+        opacity: hasInput ? 1 : 0.6,
       }}
       aria-label='Send message'
-      disabled={!input.trim() || isStreaming}
+      disabled={!hasInput}
     >
       <ArrowUp
         size={16}
-        color={
-          input.trim() && !isStreaming ? '#FFFFFF' : CHAT_COLORS.text.muted
-        }
-        className='transition-transform group-hover:scale-110 group-active:scale-95'
+        color={hasInput ? '#FFFFFF' : CHAT_COLORS.text.muted}
+        strokeWidth={2.5}
+        className='transition-transform'
       />
     </button>
   );
