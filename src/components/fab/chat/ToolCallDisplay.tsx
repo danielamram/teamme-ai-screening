@@ -57,65 +57,55 @@ export default function ToolCallDisplay({
             }}
           >
             {/* Tool Header */}
-            <div className='mb-3 flex items-center gap-2'>
-              <div
-                className='font-mono text-xs font-semibold'
-                style={{ color: CHAT_COLORS.primary }}
-              >
-                🔧 {toolName}
-              </div>
-              {hasState && (
-                <div className='ml-auto flex items-center gap-2 text-xs'>
-                  {typedPart.state === 'input-streaming' && (
-                    <span
-                      className='flex items-center gap-1.5 rounded-full px-2 py-1'
-                      style={{
-                        backgroundColor: `${CHAT_COLORS.primary}10`,
-                        color: CHAT_COLORS.primary,
-                      }}
-                    >
-                      <Loader2 size={12} className='animate-spin' />
-                      <span className='font-medium'>Streaming...</span>
-                    </span>
-                  )}
-                  {typedPart.state === 'input-available' && (
-                    <span
-                      className='flex items-center gap-1.5 rounded-full px-2 py-1'
-                      style={{
-                        backgroundColor: `${CHAT_COLORS.warning}10`,
-                        color: CHAT_COLORS.warning,
-                      }}
-                    >
-                      <Loader2 size={12} className='animate-spin' />
-                      <span className='font-medium'>Executing...</span>
-                    </span>
-                  )}
-                  {typedPart.state === 'output-available' && (
-                    <span
-                      className='flex items-center gap-1.5 rounded-full px-2 py-1'
-                      style={{
-                        backgroundColor: `${CHAT_COLORS.success}10`,
-                        color: CHAT_COLORS.success,
-                      }}
-                    >
-                      <Check size={12} />
-                      <span className='font-medium'>Completed</span>
-                    </span>
-                  )}
-                  {typedPart.state === 'output-error' && (
-                    <span
-                      className='flex items-center gap-1.5 rounded-full px-2 py-1'
-                      style={{
-                        backgroundColor: `${CHAT_COLORS.error}10`,
-                        color: CHAT_COLORS.error,
-                      }}
-                    >
-                      <span className='font-medium'>✗ Error</span>
-                    </span>
-                  )}
+            {!hasOutput && (
+              <div className='mb-3 flex items-center gap-2'>
+                <div
+                  className='font-mono text-xs font-semibold'
+                  style={{ color: CHAT_COLORS.primary }}
+                >
+                  🔧 {toolName}
                 </div>
-              )}
-            </div>
+                {hasState && (
+                  <div className='ml-auto flex items-center gap-2 text-xs'>
+                    {typedPart.state === 'input-available' && (
+                      <span
+                        className='flex items-center gap-1.5 rounded-full px-2 py-1'
+                        style={{
+                          backgroundColor: `${CHAT_COLORS.warning}10`,
+                          color: CHAT_COLORS.warning,
+                        }}
+                      >
+                        <Loader2 size={12} className='animate-spin' />
+                        <span className='font-medium'>Executing...</span>
+                      </span>
+                    )}
+                    {typedPart.state === 'output-available' && (
+                      <span
+                        className='flex items-center gap-1.5 rounded-full px-2 py-1'
+                        style={{
+                          backgroundColor: `${CHAT_COLORS.success}10`,
+                          color: CHAT_COLORS.success,
+                        }}
+                      >
+                        <Check size={12} />
+                        <span className='font-medium'>Completed</span>
+                      </span>
+                    )}
+                    {typedPart.state === 'output-error' && (
+                      <span
+                        className='flex items-center gap-1.5 rounded-full px-2 py-1'
+                        style={{
+                          backgroundColor: `${CHAT_COLORS.error}10`,
+                          color: CHAT_COLORS.error,
+                        }}
+                      >
+                        <span className='font-medium'>✗ Error</span>
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Tool Input */}
             {hasInput &&
@@ -142,12 +132,6 @@ export default function ToolCallDisplay({
               typedPart.state === 'output-available' &&
               hasOutput && (
                 <div>
-                  <div
-                    className='mb-2 font-semibold'
-                    style={{ color: CHAT_COLORS.text.secondary }}
-                  >
-                    Output:
-                  </div>
                   {toolName === 'search_candidates' &&
                   typedPart.output?.candidates ? (
                     <SearchCandidatesResult

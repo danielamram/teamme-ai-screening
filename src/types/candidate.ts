@@ -15,6 +15,14 @@ export interface Candidate {
   redFlags: string[];
 }
 
+export interface SearchCandidate {
+  id: string;
+  name: string;
+  location: string;
+  primary_stack: string[];
+  summary: string;
+}
+
 // API Response Types
 export interface APICandidateMetadata {
   person_uid: string;

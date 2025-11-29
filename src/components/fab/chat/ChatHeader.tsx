@@ -17,7 +17,7 @@ export default function ChatHeader({
   hasMessages = false,
 }: ChatHeaderProps): JSX.Element {
   const getStatusText = () => {
-    if (isStreaming) return 'Thinking...';
+    if (isStreaming) return '';
     if (hasMessages) return 'Online';
     return 'Online';
   };
@@ -70,11 +70,11 @@ export default function ChatHeader({
             Aaron
           </span>
           <span
-            className='flex items-center gap-1.5 text-xs text-white/75'
+            className='mt-2 flex items-center gap-1.5 text-xs text-white/75'
             style={{ marginTop: '2px' }}
           >
             {isStreaming && (
-              <span className='flex gap-0.5'>
+              <span className='mt-2 flex gap-0.5'>
                 <span
                   className='h-1 w-1 rounded-full bg-white/80'
                   style={{ animation: 'dotBounce 1.2s infinite ease-in-out' }}
