@@ -8,6 +8,7 @@ import { CHAT_COLORS } from './types';
 
 interface ToolCallDisplayProps {
   message: UIMessage;
+  onViewCandidate?: (candidateId: string) => void;
 }
 
 export const hasToolParts = (message: UIMessage): boolean =>
@@ -17,6 +18,7 @@ export const hasToolParts = (message: UIMessage): boolean =>
 
 export default function ToolCallDisplay({
   message,
+  onViewCandidate,
 }: ToolCallDisplayProps): JSX.Element | null {
   if (!hasToolParts(message)) {
     return null;
@@ -136,6 +138,7 @@ export default function ToolCallDisplay({
                   typedPart.output?.candidates ? (
                     <SearchCandidatesResult
                       output={typedPart.output as SearchCandidatesOutput}
+                      onViewCandidate={onViewCandidate}
                     />
                   ) : (
                     <pre

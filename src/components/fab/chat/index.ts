@@ -1,5 +1,6 @@
 // Re-export all chat-related components and types for easier imports
 export { default as CandidateCard } from './CandidateCard';
+export { default as CandidateDetailView } from './CandidateDetailView';
 export { default as ChatHeader } from './ChatHeader';
 export { default as ChatInput } from './ChatInput';
 export { default as ChatLoadingIndicator } from './ChatLoadingIndicator';

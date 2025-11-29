@@ -4,6 +4,7 @@ import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
 
 import {
+  CandidateDetailView,
   CHAT_COLORS,
   ChatHeader,
   ChatInput,
@@ -27,6 +28,7 @@ export default function ChatInterface({
 }: ChatInterfaceProps): JSX.Element | null {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState('');
+  const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
 
   const { messages, sendMessage, status, stop, setMessages } =
     useChat<UIMessage>({
@@ -80,6 +82,14 @@ export default function ChatInterface({
     }
   };
 
+  const handleViewCandidate = useCallback((candidateId: string) => {
+    setSelectedCandidateId(candidateId);
+  }, []);
+
+  const handleBackToChat = useCallback(() => {
+    setSelectedCandidateId(null);
+  }, []);
+
   if (!isOpen) return null;
 
   const hasMessages = messages.length > 0;
@@ -99,46 +109,57 @@ export default function ChatInterface({
         animation: 'fadeInUp 300ms cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
-      <ChatHeader
-        onClose={onClose}
-        onReset={handleReset}
-        isStreaming={isStreaming}
-        hasMessages={hasMessages}
-      />
-
-      {/* Messages Area or Suggested Actions */}
-      {hasMessages ? (
-        <div
-          className='flex-1 overflow-y-auto px-4 py-5'
-          style={{
-            background: 'linear-gradient(180deg, #f8f9fb 0%, #f1f3f5 100%)',
-            scrollBehavior: 'smooth',
-          }}
-        >
-          <div className='flex flex-col gap-5'>
-            {messages.map((message) => (
-              <ChatMessage
-                key={message.id}
-                message={message}
-                onQuestionClick={handleQuestionClick}
-              />
-            ))}
-            {isStreaming && <ChatLoadingIndicator />}
-            <div ref={messagesEndRef} />
-          </div>
-        </div>
+      {/* Show candidate detail view if a candidate is selected */}
+      {selectedCandidateId ? (
+        <CandidateDetailView
+          candidateId={selectedCandidateId}
+          onBack={handleBackToChat}
+        />
       ) : (
-        <ChatSuggestions />
-      )}
+        <>
+          <ChatHeader
+            onClose={onClose}
+            onReset={handleReset}
+            isStreaming={isStreaming}
+            hasMessages={hasMessages}
+          />
 
-      <ChatInput
-        input={input}
-        isStreaming={isStreaming}
-        isOpen={isOpen}
-        onInputChange={setInput}
-        onSend={sendCurrentMessage}
-        onStop={stop}
-      />
+          {/* Messages Area or Suggested Actions */}
+          {hasMessages ? (
+            <div
+              className='flex-1 overflow-y-auto px-4 py-5'
+              style={{
+                background: 'linear-gradient(180deg, #f8f9fb 0%, #f1f3f5 100%)',
+                scrollBehavior: 'smooth',
+              }}
+            >
+              <div className='flex flex-col gap-5'>
+                {messages.map((message) => (
+                  <ChatMessage
+                    key={message.id}
+                    message={message}
+                    onQuestionClick={handleQuestionClick}
+                    onViewCandidate={handleViewCandidate}
+                  />
+                ))}
+                {isStreaming && <ChatLoadingIndicator />}
+                <div ref={messagesEndRef} />
+              </div>
+            </div>
+          ) : (
+            <ChatSuggestions />
+          )}
+
+          <ChatInput
+            input={input}
+            isStreaming={isStreaming}
+            isOpen={isOpen}
+            onInputChange={setInput}
+            onSend={sendCurrentMessage}
+            onStop={stop}
+          />
+        </>
+      )}
     </div>
   );
 }
