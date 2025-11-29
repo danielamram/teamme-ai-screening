@@ -1,18 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Candidate } from '@/types/candidate';
+import type { APICandidateResponse } from '@/types/candidate';
 
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { extractCandidateIdFromUrl } from '@/utils/atsDetector';
-import { getCandidateFromAPI } from '@/utils/candidateApi';
+import { fetchCandidateData } from '@/utils/candidateApi';
 
 // Cache expiration time: 5 minutes
 const CACHE_EXPIRATION_MS = 5 * 60 * 1000;
 
 // eslint-disable-next-line import/prefer-default-export
 export function useCandidateData() {
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
-    null
-  );
+  const [selectedCandidate, setSelectedCandidate] =
+    useState<APICandidateResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [currentUrl, setCurrentUrl] = useState(window.location.href);
   const loadingRef = useRef(false);
@@ -25,7 +24,7 @@ export function useCandidateData() {
 
   // Helper function to fetch candidate with caching
   const fetchCandidateWithCache = useCallback(
-    async (candidateId: string): Promise<Candidate> => {
+    async (candidateId: string): Promise<APICandidateResponse> => {
       // Check if candidate exists in cache and is not expired
       const cachedEntry = candidatesCache[candidateId];
       const now = Date.now();
@@ -37,7 +36,7 @@ export function useCandidateData() {
 
       // Cache miss or expired - fetch from API
       console.log(`Fetching candidate from API: ${candidateId}`);
-      const candidate = await getCandidateFromAPI(candidateId);
+      const candidate = await fetchCandidateData(candidateId);
 
       // Update cache
       await setCandidatesCache({
@@ -100,7 +99,9 @@ export function useCandidateData() {
         // Use cached fetch helper
         const candidate = await fetchCandidateWithCache(urlCandidateId);
         console.log(candidate);
-        console.log(`Loaded candidate: ${candidate.name} (${urlCandidateId})`);
+        console.log(
+          `Loaded candidate: ${candidate.candidate.name} (${urlCandidateId})`
+        );
         setSelectedCandidate(candidate);
       } catch (error) {
         console.error('Error loading candidate data:', error);

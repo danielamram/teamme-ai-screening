@@ -78,10 +78,10 @@ export default function CandidateDetailView({
 
   // Load the candidate when component mounts or candidateId changes
   useEffect(() => {
-    if (candidateId && candidateId !== selectedCandidate?.id) {
+    if (candidateId && candidateId !== selectedCandidate?.candidate.id) {
       selectCandidate('A1.7A231');
     }
-  }, [candidateId, selectedCandidate?.id, selectCandidate]);
+  }, [candidateId, selectedCandidate?.candidate.id, selectCandidate]);
 
   if (loading) {
     return (
@@ -182,7 +182,8 @@ export default function CandidateDetailView({
   }
 
   const candidate = selectedCandidate;
-  const [gradientStart, gradientEnd] = getAvatarGradient(candidate.name);
+  const candidateName = candidate.candidate.name;
+  const [gradientStart, gradientEnd] = getAvatarGradient(candidateName);
   const scoreColor = getScoreColor(candidate.summary.score);
 
   return (
@@ -235,7 +236,7 @@ export default function CandidateDetailView({
                   background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`,
                 }}
               >
-                {getInitials(candidate.name)}
+                {getInitials(candidateName)}
               </div>
 
               {/* Name & Basic Info */}
@@ -244,7 +245,7 @@ export default function CandidateDetailView({
                   className='text-lg font-bold leading-tight'
                   style={{ color: CHAT_COLORS.text.primary }}
                 >
-                  {candidate.name}
+                  {candidateName}
                 </h2>
 
                 {/* Score Badge */}

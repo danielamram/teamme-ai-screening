@@ -1,5 +1,5 @@
-import { JSX, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { JSX, useState } from 'react';
 
 import { AtsAiLogo } from '@/components/icons/AtsAiLogo';
 import { API_CONFIG } from '@/constants/config';
