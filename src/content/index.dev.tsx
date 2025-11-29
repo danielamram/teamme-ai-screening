@@ -15,14 +15,34 @@ import Content from './Content';
 
 import '@assets/styles/index.css';
 
+/**
+ * Injects Google Fonts link into the document head.
+ * This is necessary because fonts don't work inside Shadow DOM.
+ */
+function injectGoogleFonts(): void {
+  if (document.getElementById('ats-ai-fonts')) return;
+
+  const link = document.createElement('link');
+  link.id = 'ats-ai-fonts';
+  link.rel = 'stylesheet';
+  link.href =
+    'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap';
+  document.head.appendChild(link);
+}
+
 const container = document.createElement('div');
 
 // Get the style element corresponding to the CSS file
-const styleElement = document.querySelector('style[data-vite-dev-id]');
+const styleElement = document.querySelector(
+  'style[data-vite-dev-id]'
+) as HTMLStyleElement | null;
 
 if (!styleElement) {
   throw new Error('Style element with attribute data-vite-dev-id not found.');
 }
+
+// Inject Google Fonts into document head (fonts don't work in Shadow DOM)
+injectGoogleFonts();
 
 // Attach the style element to the shadow root
 const shadowRoot = container.attachShadow({ mode: 'open' });

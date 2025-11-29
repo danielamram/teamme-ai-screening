@@ -1,24 +1,12 @@
 import { JSX, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
-import TeamMeIcon from '@/components/icons/TeamMeIcon';
+import { AtsAiLogo } from '@/components/icons/AtsAiLogo';
 import { API_CONFIG } from '@/constants/config';
 import { useFadeIn } from '@/hooks/useAnimations';
 
 import { CHAT_COLORS } from './chat';
 import ChatInterface from './ChatInterface';
-
-interface SuggestionItem {
-  text: string;
-  icon: 'search' | 'building' | 'trophy' | 'clock' | 'users' | 'target';
-}
-
-const suggestions: SuggestionItem[] = [
-  { text: 'Top candidates for this position', icon: 'trophy' },
-  { text: 'Candidates from similar companies', icon: 'building' },
-  { text: 'Available to start immediately', icon: 'clock' },
-  { text: 'Search by skills and location', icon: 'search' },
-];
 
 export default function FabHelpMenu(): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
@@ -69,11 +57,7 @@ export default function FabHelpMenu(): JSX.Element {
         aria-label={isOpen ? 'Close help menu' : 'Open help menu'}
       >
         <div className='transition-transform duration-200'>
-          {isOpen ? (
-            <ChevronDown size={24} color='#FFFFFF' />
-          ) : (
-            <TeamMeIcon size={32} color='#FFFFFF' />
-          )}
+          {isOpen ? <ChevronDown size={24} color='#FFFFFF' /> : <AtsAiLogo />}
         </div>
       </button>
 
@@ -81,7 +65,6 @@ export default function FabHelpMenu(): JSX.Element {
       <ChatInterface
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        suggestions={suggestions}
         apiEndpoint={API_CONFIG.assistant.endpoint}
       />
 

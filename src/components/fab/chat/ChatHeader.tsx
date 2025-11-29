@@ -67,7 +67,7 @@ export default function ChatHeader({
         {/* Name and status */}
         <div className='flex flex-col'>
           <span className='text-[15px] font-semibold leading-tight text-white'>
-            Anna
+            Aaron
           </span>
           <span
             className='flex items-center gap-1.5 text-xs text-white/75'
