@@ -8,10 +8,6 @@
 const getEnvVar = (key: string, fallback: string): string => {
   const value = import.meta.env[key];
   if (!value) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      `Environment variable ${key} is not set, using fallback: ${fallback}`
-    );
     return fallback;
   }
   return value;
@@ -24,7 +20,7 @@ export const API_CONFIG = {
   assistant: {
     endpoint: getEnvVar(
       'VITE_ASSISTANT_API_URL',
-      'https://teamme-acquisition.vercel.app/api/assistant'
+      'http://localhost:3000/api/assistant'
     ),
   },
   candidate: {

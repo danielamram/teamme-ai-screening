@@ -25,12 +25,19 @@ const extractMessageText = (message: UIMessage): string =>
     .join('\n')
     .trim();
 
+const formatTime = (date: Date | undefined): string =>
+  new Date(date || Date.now()).toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
 export default function ChatMessage({
   message,
   onQuestionClick,
 }: ChatMessageProps): JSX.Element {
   const [copied, setCopied] = useState(false);
   const messageText = extractMessageText(message);
+  const timestamp = (message as UIMessage & { createdAt?: Date }).createdAt;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(messageText);
@@ -40,11 +47,12 @@ export default function ChatMessage({
 
   if (message.role === 'user') {
     return (
-      <div className='animate-in fade-in slide-in-from-bottom-2 flex flex-col items-end gap-1 duration-300'>
+      <div className='animate-in fade-in slide-in-from-bottom-2 flex flex-col items-end gap-1.5 duration-300'>
         <div
-          className='max-w-[85%] rounded-2xl px-4 py-3 shadow-sm'
+          className='max-w-[85%] rounded-2xl rounded-br-md px-4 py-3'
           style={{
-            backgroundColor: CHAT_COLORS.primary,
+            background: `linear-gradient(135deg, ${CHAT_COLORS.primary} 0%, ${CHAT_COLORS.primaryDark} 100%)`,
+            boxShadow: `0 2px 12px ${CHAT_COLORS.primary}25`,
           }}
         >
           <p className='whitespace-pre-wrap text-sm leading-relaxed text-white'>
@@ -52,16 +60,10 @@ export default function ChatMessage({
           </p>
         </div>
         <span
-          className='px-1 text-xs'
+          className='pr-1 text-[11px] font-medium tracking-wide opacity-60'
           style={{ color: CHAT_COLORS.text.muted }}
         >
-          {new Date(
-            (message as UIMessage & { createdAt?: Date }).createdAt ||
-              Date.now()
-          ).toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
+          {formatTime(timestamp)}
         </span>
       </div>
     );
@@ -70,25 +72,41 @@ export default function ChatMessage({
   return (
     <div className='animate-in fade-in slide-in-from-bottom-2 flex flex-col gap-2 duration-300'>
       <div className='flex gap-3'>
-        <div
-          className='flex h-8 w-8 shrink-0 items-center justify-center rounded-full shadow-sm'
-          style={{
-            background: `linear-gradient(135deg, ${CHAT_COLORS.primary} 0%, ${CHAT_COLORS.primaryDark} 100%)`,
-          }}
-        >
-          <Sparkles size={14} color='#FFFFFF' />
+        {/* Avatar */}
+        <div className='relative'>
+          <div
+            className='flex h-8 w-8 shrink-0 items-center justify-center rounded-full'
+            style={{
+              background: `linear-gradient(145deg, ${CHAT_COLORS.primaryLight} 0%, ${CHAT_COLORS.primary} 50%, ${CHAT_COLORS.primaryDark} 100%)`,
+              boxShadow: `0 3px 10px ${CHAT_COLORS.primary}30`,
+            }}
+          >
+            <Sparkles size={14} color='#FFFFFF' strokeWidth={2.5} />
+          </div>
         </div>
+
+        {/* Message Content */}
         <div className='min-w-0 flex-1'>
           {messageText && (
             <div
-              className='prose-sm prose max-w-none text-sm leading-relaxed'
+              className='rounded-2xl rounded-tl-md px-4 py-3'
               style={{
-                color: CHAT_COLORS.text.primary,
+                backgroundColor: '#ffffff',
+                boxShadow:
+                  '0 1px 4px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02)',
+                border: '1px solid rgba(0,0,0,0.04)',
               }}
             >
-              <ReactMarkdown components={MARKDOWN_COMPONENTS}>
-                {messageText}
-              </ReactMarkdown>
+              <div
+                className='prose-sm prose max-w-none text-sm leading-relaxed'
+                style={{
+                  color: CHAT_COLORS.text.primary,
+                }}
+              >
+                <ReactMarkdown components={MARKDOWN_COMPONENTS}>
+                  {messageText}
+                </ReactMarkdown>
+              </div>
             </div>
           )}
 
@@ -102,41 +120,41 @@ export default function ChatMessage({
               onQuestionClick={onQuestionClick}
             />
           )}
-        </div>
-      </div>
-      <div className='ml-11 flex items-center gap-2'>
-        <span className='text-xs' style={{ color: CHAT_COLORS.text.muted }}>
-          {new Date(
-            (message as UIMessage & { createdAt?: Date }).createdAt ||
-              Date.now()
-          ).toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-        </span>
-        {messageText && (
-          <button
-            type='button'
-            onClick={handleCopy}
-            className='group rounded-lg p-1.5 transition-all hover:bg-gray-100'
-            aria-label='Copy message'
-          >
-            {copied ? (
-              <Check size={14} color={CHAT_COLORS.success} />
-            ) : (
-              <Copy
-                size={14}
-                color={CHAT_COLORS.text.muted}
-                className='transition-colors group-hover:opacity-80'
-              />
+
+          {/* Footer: timestamp + actions */}
+          <div className='mt-1.5 flex items-center gap-2 pl-1'>
+            <span
+              className='text-[11px] font-medium tracking-wide opacity-60'
+              style={{ color: CHAT_COLORS.text.muted }}
+            >
+              {formatTime(timestamp)}
+            </span>
+            {messageText && (
+              <button
+                type='button'
+                onClick={handleCopy}
+                className='group flex h-6 w-6 items-center justify-center rounded-md transition-all duration-200 hover:bg-slate-100 active:scale-90'
+                aria-label='Copy message'
+              >
+                {copied ? (
+                  <Check
+                    size={12}
+                    color={CHAT_COLORS.success}
+                    strokeWidth={2.5}
+                  />
+                ) : (
+                  <Copy
+                    size={12}
+                    color={CHAT_COLORS.text.muted}
+                    strokeWidth={2}
+                    className='opacity-50 transition-opacity group-hover:opacity-100'
+                  />
+                )}
+              </button>
             )}
-          </button>
-        )}
+          </div>
+        </div>
       </div>
     </div>
   );
 }
-
-ChatMessage.defaultProps = {
-  onQuestionClick: undefined,
-};

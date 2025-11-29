@@ -33,7 +33,7 @@ export default function ChatSuggestions(
             <span style={{ color: CHAT_COLORS.primary }}>Anna</span>
           </p>
           <h2
-            className='text-3xl font-bold tracking-tight'
+            className='text-3xl font-extrabold tracking-tight'
             style={{ color: CHAT_COLORS.text.primary }}
           >
             How can I help

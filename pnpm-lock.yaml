@@ -37,6 +37,9 @@ devDependencies:
   '@crxjs/vite-plugin':
     specifier: ^2.0.3
     version: 2.0.3
+  '@fontsource/dm-sans':
+    specifier: ^5.2.8
+    version: 5.2.8
   '@ianvs/prettier-plugin-sort-imports':
     specifier: ^4.2.1
     version: 4.2.1(prettier@3.2.5)
@@ -1410,6 +1413,10 @@ packages:
   /@eslint/js@8.57.0:
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    dev: true
+
+  /@fontsource/dm-sans@5.2.8:
+    resolution: {integrity: sha512-tlovG42m9ESG28WiHpLq3F5umAlm64rv0RkqTbYowRn70e9OlRr5a3yTJhrhrY+k5lftR/OFJjPzOLQzk8EfCA==}
     dev: true
 
   /@humanwhocodes/config-array@0.11.14:

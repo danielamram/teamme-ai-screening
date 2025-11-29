@@ -2,7 +2,6 @@ import { JSX, useCallback, useEffect, useRef, useState } from 'react';
 import type { UIMessage } from 'ai';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import type { ChatInterfaceProps } from './chat';
 
 import {
   CHAT_COLORS,
@@ -11,7 +10,15 @@ import {
   ChatLoadingIndicator,
   ChatMessage,
   ChatSuggestions,
+  SuggestionItem,
 } from './chat';
+
+export interface ChatInterfaceProps {
+  isOpen: boolean;
+  onClose: () => void;
+  suggestions: SuggestionItem[];
+  apiEndpoint: string;
+}
 
 const POSITION_ID = '1D.06B';
 
@@ -86,7 +93,7 @@ export default function ChatInterface({
 
   return (
     <div
-      className='fixed flex flex-col overflow-hidden rounded-3xl shadow-2xl backdrop-blur-xl'
+      className='fixed flex flex-col overflow-hidden rounded-3xl'
       style={{
         zIndex: 2147483646,
         bottom: '96px',
@@ -94,7 +101,9 @@ export default function ChatInterface({
         width: '420px',
         height: '640px',
         backgroundColor: CHAT_COLORS.background,
-        animation: 'fadeInUp 250ms cubic-bezier(0.16, 1, 0.3, 1)',
+        boxShadow:
+          '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 12px 24px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.03)',
+        animation: 'fadeInUp 300ms cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
       <ChatHeader
@@ -107,10 +116,13 @@ export default function ChatInterface({
       {/* Messages Area or Suggested Actions */}
       {hasMessages ? (
         <div
-          className='flex-1 overflow-y-auto px-5 py-5'
-          style={{ backgroundColor: '#f5f7fa' }}
+          className='flex-1 overflow-y-auto px-4 py-5'
+          style={{
+            background: 'linear-gradient(180deg, #f8f9fb 0%, #f1f3f5 100%)',
+            scrollBehavior: 'smooth',
+          }}
         >
-          <div className='flex flex-col gap-6'>
+          <div className='flex flex-col gap-5'>
             {messages.map((message) => (
               <ChatMessage
                 key={message.id}
