@@ -11,6 +11,7 @@ import { CHAT_COLORS } from './types';
 interface ChatMessageProps {
   message: UIMessage;
   onQuestionClick?: (question: string) => void;
+  onViewCandidate?: (candidateId: string) => void;
 }
 
 const extractMessageText = (message: UIMessage): string =>
@@ -34,6 +35,7 @@ const formatTime = (date: Date | undefined): string =>
 export default function ChatMessage({
   message,
   onQuestionClick,
+  onViewCandidate,
 }: ChatMessageProps): JSX.Element {
   const [copied, setCopied] = useState(false);
   const messageText = extractMessageText(message);
@@ -111,7 +113,7 @@ export default function ChatMessage({
           )}
 
           {/* Tool Calls (if any) */}
-          <ToolCallDisplay message={message} />
+          <ToolCallDisplay message={message} onViewCandidate={onViewCandidate} />
 
           {/* Followup Questions */}
           {onQuestionClick && (

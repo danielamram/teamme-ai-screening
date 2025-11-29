@@ -39,8 +39,10 @@ const getConfirmationBackground = (action: ConfirmingAction): string => {
 
 export default function SearchCandidatesResult({
   output,
+  onViewCandidate,
 }: {
   output: SearchCandidatesOutput;
+  onViewCandidate?: (candidateId: string) => void;
 }): JSX.Element {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [confirmingAction, setConfirmingAction] =
@@ -345,6 +347,7 @@ export default function SearchCandidatesResult({
             selectable
             selected={selectedIds.has(candidate.id)}
             onSelectionChange={handleSelectionChange}
+            onViewCandidate={onViewCandidate}
           />
         ))}
       </div>

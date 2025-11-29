@@ -54,11 +54,13 @@ export default function CandidateCard({
   selectable = false,
   selected = false,
   onSelectionChange,
+  onViewCandidate,
 }: {
   candidate: SearchCandidate;
   selectable?: boolean;
   selected?: boolean;
   onSelectionChange?: (id: string, selected: boolean) => void;
+  onViewCandidate?: (candidateId: string) => void;
 }): JSX.Element {
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -88,6 +90,8 @@ export default function CandidateCard({
   const handleCardClick = () => {
     if (selectable && onSelectionChange) {
       onSelectionChange(candidate.id, !selected);
+    } else if (onViewCandidate) {
+      onViewCandidate(candidate.id);
     }
   };
 
@@ -96,6 +100,8 @@ export default function CandidateCard({
     if (isHovered) return CHAT_COLORS.primaryLight;
     return CHAT_COLORS.border;
   };
+
+  const isClickable = selectable || onViewCandidate;
 
   return (
     <div
@@ -108,7 +114,7 @@ export default function CandidateCard({
         boxShadow: isHovered
           ? `0 8px 30px -12px ${CHAT_COLORS.primary}30, 0 4px 12px -4px rgba(0,0,0,0.08)`
           : '0 2px 8px -2px rgba(0,0,0,0.06)',
-        cursor: selectable ? 'pointer' : 'default',
+        cursor: isClickable ? 'pointer' : 'default',
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -124,11 +130,15 @@ export default function CandidateCard({
         }}
       />
 
-      {/* Full card click overlay for selection */}
-      {selectable && (
+      {/* Full card click overlay */}
+      {isClickable && (
         <button
           type='button'
-          aria-label={`${selected ? 'Deselect' : 'Select'} ${candidate.name}`}
+          aria-label={
+            selectable
+              ? `${selected ? 'Deselect' : 'Select'} ${candidate.name}`
+              : `View ${candidate.name}`
+          }
           className='absolute inset-0 z-0'
           onClick={handleCardClick}
         />
