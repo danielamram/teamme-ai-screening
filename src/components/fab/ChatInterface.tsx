@@ -46,6 +46,20 @@ export default function ChatInterface({
     });
   const isStreaming = status === 'submitted' || status === 'streaming';
 
+  // Check if any message has an active tool call
+  const hasActiveToolCall = messages.some((message) =>
+    message.parts.some((part) => {
+      if (!part.type.startsWith('tool-')) return false;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const typedPart = part as any;
+      return (
+        'state' in typedPart &&
+        (typedPart.state === 'input-streaming' ||
+          typedPart.state === 'input-available')
+      );
+    })
+  );
+
   const handleReset = useCallback(() => {
     if (isStreaming) {
       stop();
@@ -143,7 +157,7 @@ export default function ChatInterface({
                     onViewCandidate={handleViewCandidate}
                   />
                 ))}
-                {isStreaming && <ChatLoadingIndicator />}
+                {isStreaming && !hasActiveToolCall && <ChatLoadingIndicator />}
                 <div ref={messagesEndRef} />
               </div>
             </div>
