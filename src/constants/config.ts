@@ -20,7 +20,7 @@ export const API_CONFIG = {
   assistant: {
     endpoint: getEnvVar(
       'VITE_ASSISTANT_API_URL',
-      'https://teamme-acquisition.vercel.app/api/assistant'
+      'http://localhost:3000/api/assistant'
     ),
   },
   candidate: {
