@@ -1,65 +1,11 @@
 @import 'tailwindcss';
 @plugin "daisyui";
 
-@font-face {
-  font-weight: 900;
-  src: url('../fonts/DMSans-Black.ttf');
-  font-family: 'DMSans';
-}
-
-@font-face {
-  font-weight: 800;
-  src: url('../fonts/DMSans-ExtraBold.ttf');
-  font-family: 'DMSans';
-}
-
-@font-face {
-  font-weight: 700;
-  src: url('../fonts/DMSans-Bold.ttf');
-  font-family: 'DMSans';
-}
-
-@font-face {
-  font-weight: 600;
-  src: url('../fonts/DMSans-SemiBold.ttf');
-  font-family: 'DMSans';
-}
-
-@font-face {
-  font-weight: 500;
-  src: url('../fonts/DMSans-Medium.ttf');
-  font-family: 'DMSans';
-}
-
-@font-face {
-  font-weight: 400;
-  src: url('../fonts/DMSans-Regular.ttf');
-  font-family: 'DMSans';
-}
-
-@font-face {
-  font-weight: 300;
-  src: url('../fonts/DMSans-Light.ttf');
-  font-family: 'DMSans';
-}
-
-@font-face {
-  font-weight: 200;
-  src: url('../fonts/DMSans-ExtraLight.ttf');
-  font-family: 'DMSans';
-}
-
-@font-face {
-  font-weight: 100;
-  src: url('../fonts/DMSans-Thin.ttf');
-  font-family: 'DMSans';
-}
-
 :host {
   all: initial;
   font-weight: 500 !important;
   font-size: 16px !important;
-  font-family: 'DMSans', sans-serif !important;
+  font-family: 'DM Sans', sans-serif !important;
   letter-spacing: 0.025em !important;
 }
 

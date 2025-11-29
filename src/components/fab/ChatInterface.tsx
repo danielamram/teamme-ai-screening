@@ -10,13 +10,11 @@ import {
   ChatLoadingIndicator,
   ChatMessage,
   ChatSuggestions,
-  SuggestionItem,
 } from './chat';
 
 export interface ChatInterfaceProps {
   isOpen: boolean;
   onClose: () => void;
-  suggestions: SuggestionItem[];
   apiEndpoint: string;
 }
 
@@ -25,7 +23,6 @@ const POSITION_ID = '1D.06B';
 export default function ChatInterface({
   isOpen,
   onClose,
-  suggestions,
   apiEndpoint,
 }: ChatInterfaceProps): JSX.Element | null {
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -72,10 +69,6 @@ export default function ChatInterface({
       // Errors surface via the onError callback from useChat.
     }
   }, [input, isStreaming, sendMessage]);
-
-  const handleSuggestionClick = (text: string) => {
-    setInput(text);
-  };
 
   const handleQuestionClick = async (question: string) => {
     if (isStreaming) return;
@@ -135,10 +128,7 @@ export default function ChatInterface({
           </div>
         </div>
       ) : (
-        <ChatSuggestions
-          suggestions={suggestions}
-          onSuggestionClick={handleSuggestionClick}
-        />
+        <ChatSuggestions />
       )}
 
       <ChatInput

@@ -59,7 +59,7 @@ export default function ChatInput({
           boxShadow: isFocused
             ? `0 0 0 2px ${CHAT_COLORS.primary}40, 0 4px 12px rgba(0,0,0,0.08)`
             : '0 1px 3px rgba(0,0,0,0.04), inset 0 1px 2px rgba(0,0,0,0.02)',
-          border: `1px solid ${isFocused ? `${CHAT_COLORS.primary  }30` : CHAT_COLORS.border}`,
+          border: `1px solid ${isFocused ? `${CHAT_COLORS.primary}30` : CHAT_COLORS.border}`,
         }}
       >
         <textarea
@@ -71,7 +71,7 @@ export default function ChatInput({
           onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          placeholder='Ask Anna anything...'
+          placeholder='Ask Aaron anything...'
           rows={1}
           className='flex-1 resize-none bg-transparent py-2 text-sm leading-relaxed outline-none placeholder:text-slate-400'
           style={{
