@@ -76,7 +76,8 @@ export default function CandidateCard({
 
   const [gradientStart, gradientEnd] = getAvatarGradient(candidate.name);
 
-  const handleCopyDetails = async () => {
+  const handleCopyDetails = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     const details = [
       `Name: ${candidate.name}`,
       `Location: ${candidate.location}`,
@@ -287,8 +288,11 @@ export default function CandidateCard({
           {needsTruncation && (
             <button
               type='button'
-              onClick={() => setExpanded(!expanded)}
-              className='flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all duration-200 hover:bg-opacity-10'
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpanded(!expanded);
+              }}
+              className='flex cursor-pointer cursor-pointer items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all duration-200 hover:bg-opacity-10'
               style={{
                 color: CHAT_COLORS.primary,
                 backgroundColor: `${CHAT_COLORS.primary}08`,
@@ -310,7 +314,7 @@ export default function CandidateCard({
           <button
             type='button'
             onClick={handleCopyDetails}
-            className='ml-auto flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200'
+            className='ml-auto flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200'
             style={{
               backgroundColor: copied ? CHAT_COLORS.success : 'transparent',
               color: copied ? '#FFFFFF' : CHAT_COLORS.text.muted,
