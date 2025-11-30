@@ -90,7 +90,6 @@ export default function CandidateCard({
   };
 
   const handleCardClick = () => {
-    console.log('handleCardClick', onViewCandidate);
     if (onViewCandidate) {
       onViewCandidate(candidate.id);
     }
