@@ -52,11 +52,10 @@ export default function CandidateProfileCard({
       >
         <div className='flex items-start gap-5'>
           <div
-            className='relative flex h-24 w-24 shrink-0 items-center justify-center rounded-3xl text-2xl font-bold shadow-lg ring-4'
+            className='relative flex h-24 w-24 shrink-0 items-center justify-center rounded-3xl text-2xl font-bold shadow-lg ring-4 ring-white/50'
             style={{
               background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`,
               color: CHAT_COLORS.background,
-              ringColor: 'rgba(255, 255, 255, 0.5)',
             }}
           >
             {getInitials(candidateName)}
