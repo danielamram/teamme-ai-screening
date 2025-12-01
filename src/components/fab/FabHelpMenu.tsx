@@ -41,10 +41,11 @@ export default function FabHelpMenu(): JSX.Element {
         className='group fixed flex items-center justify-center rounded-full shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl active:scale-95'
         style={{
           zIndex: 2147483647,
-          top: '20px',
-          left: isOpen ? '364px' : '20px',
+          bottom: '20px',
+          left: '20px',
           width: '56px',
           height: '56px',
+          display: isOpen ? 'none' : 'flex',
           background: `linear-gradient(135deg, ${CHAT_COLORS.primary} 0%, ${CHAT_COLORS.primaryDark} 100%)`,
           border: 'none',
           cursor: 'pointer',
