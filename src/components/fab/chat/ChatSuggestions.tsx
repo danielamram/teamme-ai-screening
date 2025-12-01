@@ -15,20 +15,13 @@ interface ChatSuggestionsProps {
 
 const PREDEFINED_PROMPTS: Prompt[] = [
   {
-    question: 'Show me the top candidates for this position',
-    description: 'View candidates ranked by match score',
+    question: 'Show me the strongest matches for this role',
   },
   {
-    question: 'Find candidates with specific skills',
-    description: 'Search by technical skills or experience',
+    question: 'Find candidates similar to this profile',
   },
   {
-    question: 'What are the next steps for this position?',
-    description: 'Get suggested actions and recommendations',
-  },
-  {
-    question: 'Summarize candidate pipeline status',
-    description: 'Overview of all candidates in the hiring process',
+    question: 'Which candidates should I pass on?',
   },
 ];
 
