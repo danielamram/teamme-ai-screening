@@ -32,6 +32,7 @@ export default function ChatInterface({
   const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(
     null
   );
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const { messages, sendMessage, status, stop, setMessages } =
     useChat<UIMessage>({
@@ -68,6 +69,7 @@ export default function ChatInterface({
     }
     setMessages([]);
     setInput('');
+    setSelectedFile(null);
   }, [isStreaming, stop, setMessages]);
 
   // Auto-scroll to bottom when new messages arrive
@@ -94,6 +96,9 @@ export default function ChatInterface({
 
     // Clear input immediately for better UX
     setInput('');
+    // TODO: Handle file upload with message if selectedFile is not null
+    // For now, clear the selected file
+    setSelectedFile(null);
 
     try {
       await sendMessage({ text: trimmedInput });
@@ -101,6 +106,14 @@ export default function ChatInterface({
       // Errors surface via the onError callback from useChat.
     }
   }, [input, isStreaming, sendMessage]);
+
+  const handleFileSelect = useCallback((file: File) => {
+    setSelectedFile(file);
+  }, []);
+
+  const handleFileRemove = useCallback(() => {
+    setSelectedFile(null);
+  }, []);
 
   const handleQuestionClick = async (question: string) => {
     if (isStreaming) return;
@@ -125,7 +138,7 @@ export default function ChatInterface({
   }, []);
 
   const handleSuggestionClick = useCallback(
-    async (action: string, description: string) => {
+    async (_action: string, description: string) => {
       if (isStreaming) return;
 
       try {
@@ -206,6 +219,9 @@ export default function ChatInterface({
             onInputChange={setInput}
             onSend={sendCurrentMessage}
             onStop={stop}
+            onFileSelect={handleFileSelect}
+            selectedFile={selectedFile}
+            onFileRemove={handleFileRemove}
           />
         </>
       )}
