@@ -165,7 +165,7 @@ export default function ChatInput({
       )}
 
       <div
-        className='flex items-end gap-2 rounded-2xl px-4 py-2 transition-all duration-200'
+        className='flex items-center gap-2 rounded-2xl px-4 py-2 transition-all duration-200'
         style={{
           backgroundColor: isFocused ? '#ffffff' : '#f8f9fb',
           boxShadow: isFocused
@@ -189,7 +189,7 @@ export default function ChatInput({
           type='button'
           onClick={handleFileButtonClick}
           disabled={isStreaming}
-          className='mb-0.5 flex items-center justify-center transition-all duration-200 hover:opacity-70 disabled:opacity-40'
+          className='flex items-center justify-center transition-all duration-200 hover:opacity-70 disabled:opacity-40'
           style={{
             width: '32px',
             height: '32px',
@@ -235,14 +235,12 @@ export default function ChatInput({
             maxHeight: '120px',
           }}
         />
-        <div className='mb-0.5'>
-          <SendButton
-            input={input}
-            isStreaming={isStreaming}
-            onSend={onSend}
-            onStop={onStop}
-          />
-        </div>
+        <SendButton
+          input={input}
+          isStreaming={isStreaming}
+          onSend={onSend}
+          onStop={onStop}
+        />
       </div>
       <p
         className='mt-2 text-center text-xs'

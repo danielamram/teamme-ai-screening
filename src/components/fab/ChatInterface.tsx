@@ -117,12 +117,7 @@ export default function ChatInterface({
 
   const handleQuestionClick = async (question: string) => {
     if (isStreaming) return;
-
-    try {
-      await sendMessage({ text: question });
-    } catch {
-      // Errors surface via the onError callback from useChat.
-    }
+    setInput(question);
   };
 
   const handleViewCandidate = useCallback((candidateId: string) => {
