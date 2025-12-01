@@ -1,5 +1,6 @@
 import { JSX } from 'react';
 
+import CandidateListTooltips from '@/components/CandidateListTooltips';
 import FabHelpMenu from '@/components/fab/FabHelpMenu';
 import { useIsOnATS } from '@/hooks/useIsOnATS';
 
@@ -11,7 +12,7 @@ export default function Content(): JSX.Element | null {
       {isOnATS && (
         <>
           <FabHelpMenu />
-          {/* <CandidateListTooltips /> */}
+          <CandidateListTooltips />
         </>
       )}
     </div>

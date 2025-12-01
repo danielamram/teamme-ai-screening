@@ -1,7 +1,6 @@
 import { JSX, useCallback, useEffect, useRef, useState } from 'react';
 
 import { getScoreColor } from '@/constants/design';
-import { fetchCandidateData } from '@/utils/candidateApi';
 
 import { CHAT_COLORS } from './fab/chat/types';
 
@@ -17,6 +16,13 @@ interface CandidateCache {
 
 // Cache expiration: 5 minutes
 const CACHE_EXPIRATION_MS = 5 * 60 * 1000;
+
+// Mock function to generate candidate scores
+function getMockCandidateScore(candidateId: string): number {
+  // Use candidate ID to generate a deterministic score between 0-100
+  const hash = candidateId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return (hash % 100) + 1; // Score between 1-100
+}
 
 // Extract candidate ID from href like /app/int/todo/50935460 or /app/req/358701/can/51042831
 function extractCandidateIdFromHref(href: string): string | null {
@@ -94,11 +100,18 @@ export default function CandidateListTooltips(): JSX.Element | null {
       }));
 
       try {
-        const apiResponse = await fetchCandidateData(candidateId);
+        // Simulate API delay
+        await new Promise((resolve) => {
+          setTimeout(resolve, 300);
+        });
+
+        // Use mock data instead of API call
+        const mockScore = getMockCandidateScore(candidateId);
+
         setCandidateCache((prev) => ({
           ...prev,
           [candidateId]: {
-            score: apiResponse.detailed_summary.score,
+            score: mockScore,
             loading: false,
             error: false,
             timestamp: Date.now(),
