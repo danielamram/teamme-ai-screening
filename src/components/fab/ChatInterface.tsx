@@ -143,17 +143,17 @@ export default function ChatInterface({
 
   return (
     <div
-      className='fixed flex flex-col overflow-hidden rounded-3xl'
+      className='fixed flex flex-col overflow-hidden'
       style={{
         zIndex: 2147483646,
-        bottom: '96px',
-        left: '20px',
+        top: 0,
+        left: 0,
         width: '420px',
-        height: '640px',
+        height: '100vh',
         backgroundColor: CHAT_COLORS.background,
         boxShadow:
           '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 12px 24px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.03)',
-        animation: 'fadeInUp 300ms cubic-bezier(0.16, 1, 0.3, 1)',
+        animation: 'slideInLeft 300ms cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
       {/* Show candidate detail view if a candidate is selected */}
