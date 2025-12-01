@@ -196,7 +196,7 @@ export default function ChatInterface({
               </div>
             </div>
           ) : (
-            <ChatSuggestions />
+            <ChatSuggestions onPromptClick={handleQuestionClick} />
           )}
 
           <ChatInput
